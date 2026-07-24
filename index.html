@@ -619,7 +619,7 @@ const T16_ALL=Object.keys(T16).sort();
 let ED=null, EDstatus="";
 
 function uniq(f){return [...new Set(P.map(f).filter(Boolean))].sort();}
-function blankPerson(){return {id:null,n:"",g:"",co:"",st:"",lp:"",lu:"",t:"",id16:"",wg:[],wgc:[],wgf:[],cs:[],sg:[],sgt:"",kt:"",mf:"",mt:"",lead:false};}
+function blankPerson(){return {id:null,n:"",g:"",dv:"",co:"",st:"",lp:"",lu:"",t:"",id16:"",wg:[],wgc:[],wgf:[],cs:[],sg:[],sgt:"",kt:"",mf:"",mt:"",lead:false};}
 function editPerson(i){ED=JSON.parse(JSON.stringify(P[i]));ED.sgt=ED.sgt||"";EDstatus="";render();window.scrollTo(0,0);}
 function newPerson(){ED=blankPerson();EDstatus="";render();window.scrollTo(0,0);}
 function cancelEdit(){ED=null;EDstatus="";render();}
@@ -649,12 +649,12 @@ async function saveProfile(){
     "Leadership Set":!!ED.lead
   };
   if(ED.email!==undefined)fields["Email"]=ED.email||"";
-  if(ED.g)fields["Division"]=ED.g;
+  if(ED.dv!==undefined)fields["Division"]=ED.dv||"";if(ED.co!==undefined)fields["Country"]=ED.co||"";
   try{
     const res=await fetch('/.netlify/functions/save',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({login:CRED.l,password:CRED.p,recordId:ED.id,fields:fields})});
     const d=await res.json();
-    if(!res.ok)throw new Error(d.error||'Save failed');
+    if(!res.ok){const e=new Error(d.error||'Save failed');e.detail=d.detail;throw e;}
     // refresh from the base so we're never showing stale data
     const fresh=await load(CRED.l,CRED.p);
     P=fresh.people;
@@ -662,7 +662,7 @@ async function saveProfile(){
     ED=null;
     render();
   }catch(e){
-    EDstatus='<span style="color:#b4453a">'+e.message+'</span>';
+    EDstatus='<span style="color:#b4453a">'+e.message+'</span>'+(e.detail?'<br><span style="color:#9aa6a2;font-size:11.5px">'+String(e.detail).slice(0,300)+'</span>':'');
     btn.disabled=false;btn.textContent='Save profile';
     render();
   }
@@ -688,7 +688,7 @@ function manageView(){
      +'<div class="synth">'
      +'<div class="sec" style="--accent:var(--ink)"><h4><span class="dot"></span>Person</h4>'
        +'<label class="fl">Full name</label><input class="fi" value="'+(ED.n||'').replace(/"/g,'&quot;')+'" oninput="edSet(\'n\',this.value)">'
-       +sel('Division','g',uniq(p=>p.g),ED.g)
+       +sel('Division','dv',uniq(p=>p.dv),ED.dv)+sel('Country','co',uniq(p=>p.co),ED.co)
        +sel('Status','st',["Active","Inactive"],ED.st)
        +'<label class="fl" style="margin-top:12px"><input type="checkbox" '+(ED.lead?'checked':'')+' onchange="edSet(\'lead\',this.checked)"> In the leadership set (the 45)</label>'
      +'</div>'

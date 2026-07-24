@@ -131,6 +131,8 @@ exports.handler = async (event) => {
           id: r.id,
           n: name,
           g: x["Division"] || x["Country"] || "Unassigned",
+          dv: x["Division"] || "",
+          co: x["Country"] || "",
           st: x["Status"] || "",
           lead: x["Leadership Set"] === true,
           lp: x["Primary Personality"] || "",

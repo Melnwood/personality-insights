@@ -114,6 +114,19 @@ exports.handler = async (event) => {
       body: JSON.stringify({ ok: true, id: result.records[0].id, by: f["Name"] || login }),
     };
   } catch (err) {
-    return { statusCode: 502, body: JSON.stringify({ error: "Could not save.", detail: String(err) }) };
+    // Surface what Airtable actually said — a silent "could not save" is undebuggable.
+    const raw = String(err);
+    let hint = "";
+    if (/\b(401|403)\b/.test(raw) || /INVALID_PERMISSIONS|NOT_AUTHORIZED/i.test(raw)) {
+      hint = "The Airtable token can read but not write. Add the data.records:write scope to your personal access token, then redeploy.";
+    } else if (/UNKNOWN_FIELD_NAME/i.test(raw)) {
+      hint = "A field name in the app no longer matches the Airtable base.";
+    } else if (/INVALID_MULTIPLE_CHOICE_OPTIONS|INVALID_VALUE_FOR_COLUMN/i.test(raw)) {
+      hint = "One of the values isn't a valid option for that field in Airtable.";
+    }
+    return {
+      statusCode: 502,
+      body: JSON.stringify({ error: hint || "Could not save.", detail: raw }),
+    };
   }
 };
