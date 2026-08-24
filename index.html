@@ -568,7 +568,7 @@ function cardList(list,pick){return list.map(p=>{const i=P.indexOf(p);const tp=t
  +'<div class="badges">'+(p.lp?'<span class="b liv">'+p.lp+'</span>':'<span class="b empty">LivStyle</span>')+(p.t?'<span class="b p16">'+p.t+(p.id16?"-"+p.id16:"")+'</span>':'<span class="b empty">16 Types</span>')+(p.wg.length?'<span class="b wg">'+p.wg.join(" · ")+'</span>':'<span class="b empty">Wk. Genius</span>')+(p.sg.length?'<span class="b sg">'+p.sg[0]+'…</span>':'<span class="b empty">Sp. Gifts</span>')+'</div></div>';}).join('')||'<div class="hint">No one matches those filters.</div>';}
 function setType(k){filter.type=(k==='all')?null:(filter.type===k?null:k);render();}
 function setGrp(g){filter.grp=filter.grp===g?null:g;render();}
-function setQ(v){filter.q=v;render();}
+function setQ(v){filter.q=v;render();setTimeout(function(){var el=document.querySelector('.search');if(el&&el.focus){el.focus();var n=el.value.length;if(el.setSelectionRange)try{el.setSelectionRange(n,n);}catch(e){}}},0);}
 
 function opts(sel){return SC().map(p=>{const i=P.indexOf(p);return '<option value="'+i+'" '+(i===sel?"selected":"")+'>'+p.n+' · '+p.g+'</option>';}).join('');}
 function compareView(){const a=P[cmpA],b=P[cmpB];if(!a||!b)return '<div class="hint">Not enough people.</div>';const ta=threadParts(a.kt),tb=threadParts(b.kt);
