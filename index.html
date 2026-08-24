@@ -235,6 +235,16 @@
   .accchev{font-size:15px;color:var(--soft);flex:none}
   .accbody{padding:2px 20px 18px;border-top:1px solid var(--line)}
   .accbody .collective{margin-top:16px}
+  .libnote{font-size:12.5px;color:var(--soft);line-height:1.6;background:#fbf3dd;border:1px solid #ecd9a6;border-radius:10px;padding:11px 14px;margin:14px 0}
+  .libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+  .libcard{text-align:left;font-family:inherit;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:15px 16px;cursor:pointer;transition:.12s;display:flex;flex-direction:column;gap:6px}
+  .libcard:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--ink)}
+  .libname{font-family:"Newsreader",serif;font-size:18px;font-weight:500;color:var(--ink);line-height:1.2}
+  .libblurb{font-size:12px;color:var(--soft);line-height:1.45}
+  .libtop{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+  .libwho{font-size:11px;font-weight:600;color:var(--soft);background:#e7ebe6;border-radius:999px;padding:2px 8px}
+  .libwho.t{background:var(--sg);color:#fff}
+  .libgo{font-size:11.5px;font-weight:600;color:var(--liv);margin-top:2px}
   .savebar{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
   .sbrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   @media(max-width:760px){.sbrow{grid-template-columns:1fr}}
@@ -683,12 +693,13 @@ function rfSet(dim,lv){RF.d[dim]=RF.d[dim]===lv?undefined:lv;RF.preset="custom";
 function rfHelp(dim){RF.open=RF.open===dim?null:dim;render();}
 function rfWG(g){const i=RF.wg.indexOf(g);if(i>-1)RF.wg.splice(i,1);else RF.wg.push(g);RF.preset="custom";render();}
 
-function rfScore(p){
+function rfScore(p,d,wg){
+ d=d||RF.d; wg=wg||RF.wg;
  let parts=[],hits=[],misses=[],warn=[];
  // 1. LivStyle dials
  let dimScores=[];
  RF_DIMS.forEach(function(D){
-   const want=RF.d[D.k];if(!want)return;
+   const want=d[D.k];if(!want)return;
    const vals=D.tr.map(t=>p.tr&&typeof p.tr[t]==="number"?p.tr[t]:null).filter(v=>v!==null);
    if(!vals.length)return;
    const got=vals.reduce((a,b)=>a+b,0)/vals.length;
@@ -703,19 +714,97 @@ function rfScore(p){
  const livScore=dimScores.length?dimScores.reduce((a,b)=>a+b,0)/dimScores.length:null;
  if(livScore!==null)parts.push([livScore,3]);
  // 2. Working Genius
- if(RF.wg.length&&p.wg.length){
+ if(wg.length&&p.wg.length){
    let g=0;
-   RF.wg.forEach(function(need){
+   wg.forEach(function(need){
      if(p.wg.includes(need)){g+=100;hits.push(need+" is a genius");}
      else if(p.wgf.includes(need)){g+=0;warn.push("This role needs "+need+" — that DRAINS them.");}
      else g+=50;
    });
-   parts.push([g/RF.wg.length,2]);
+   parts.push([g/wg.length,2]);
  }
  if(!parts.length)return null;
  const tot=parts.reduce((a,b)=>a+b[1],0);
  const score=Math.round(parts.reduce((a,b)=>a+b[0]*b[1],0)/tot);
  return {score,hits,misses,warn};
+}
+
+/* ================= ROLE LIBRARY =================
+   Ready-made role archetypes, each defined by what the ROLE demands
+   (working-style dials + Working Genius) — NOT reverse-engineered from
+   who's in the base, so the ranking isn't fitted to its own population.
+   Scored on the same engine as custom roles. */
+const ARCHETYPES=[
+ {key:"director",  name:"Team / Country Director", blurb:"Leads a team or national work end to end.",
+  d:{drive:"high",people:"high",vision:"high",execution:"high",structure:"med",autonomy:"high",detail:"low"}, wg:["Galvanizing","Tenacity"]},
+ {key:"exec",      name:"Executive / Strategic Leader", blurb:"Sets org-level direction and priorities.",
+  d:{vision:"high",drive:"high",autonomy:"high",people:"med",execution:"med",structure:"med",detail:"low"}, wg:["Wonder","Galvanizing"]},
+ {key:"ops",       name:"Operations Leader", blurb:"Runs the engine — process, systems, follow-through.",
+  d:{structure:"high",execution:"high",detail:"high",drive:"med",people:"med",vision:"low",autonomy:"med"}, wg:["Enablement","Tenacity"]},
+ {key:"it",        name:"IT / Systems Leader", blurb:"Builds and runs technical systems. Style only — not technical skill.",
+  d:{structure:"high",detail:"high",execution:"high",vision:"med",autonomy:"high",drive:"med",people:"low"}, wg:["Tenacity","Invention"]},
+ {key:"finance",   name:"Finance / Steward", blurb:"Stewards money with care and precision.",
+  d:{detail:"high",structure:"high",execution:"med",drive:"low",people:"low",vision:"low",autonomy:"med"}, wg:["Tenacity","Discernment"]},
+ {key:"admin",     name:"Administrator / Coordinator", blurb:"Keeps things running — logistics and coordination.",
+  d:{structure:"high",detail:"high",execution:"high",people:"med",drive:"low",vision:"low",autonomy:"low"}, wg:["Enablement","Tenacity"]},
+ {key:"ministry",  name:"Ministry Team Director", blurb:"Leads a ministry team; disciples and drives fruit.",
+  d:{people:"high",drive:"med",vision:"med",execution:"med",autonomy:"med",structure:"med",detail:"low"}, wg:["Galvanizing","Enablement"]},
+ {key:"youthcoach", name:"Youth Coach", blurb:"Disciples and draws in young people on the ground \u2014 the frontline.",
+  d:{people:"high",vision:"med",execution:"med",autonomy:"med",drive:"med",structure:"low",detail:"low"}, wg:["Galvanizing","Enablement"]},
+ {key:"program",    name:"Program Leader", blurb:"Runs a program, camp or event end to end.",
+  d:{drive:"high",execution:"high",structure:"high",people:"med",vision:"med",detail:"med",autonomy:"med"}, wg:["Galvanizing","Tenacity"]},
+ {key:"planter",   name:"Church Planter / Innovator", blurb:"Starts new work from nothing.",
+  d:{vision:"high",autonomy:"high",drive:"high",people:"med",execution:"med",structure:"low",detail:"low"}, wg:["Wonder","Invention"]},
+ {key:"discipler", name:"Discipler / Relational", blurb:"Grows people one-to-one and in small groups.",
+  d:{people:"high",autonomy:"med",vision:"med",execution:"med",drive:"low",structure:"low",detail:"low"}, wg:["Enablement","Discernment"]},
+ {key:"trainer",   name:"Trainer / Coach", blurb:"Develops others; teaches and equips.",
+  d:{people:"high",vision:"med",structure:"med",execution:"med",drive:"med",detail:"med",autonomy:"med"}, wg:["Enablement","Galvanizing"]},
+ {key:"connector", name:"Recruiter / Connector", blurb:"Brings the right people in and links them up.",
+  d:{people:"high",drive:"med",vision:"med",execution:"med",autonomy:"med",structure:"low",detail:"low"}, wg:["Galvanizing","Invention"]},
+ {key:"comms",     name:"Communications / Media Lead", blurb:"Tells the story; carries the message out.",
+  d:{vision:"high",people:"med",execution:"med",detail:"med",drive:"med",structure:"med",autonomy:"med"}, wg:["Invention","Galvanizing"]},
+ {key:"care",      name:"Staff Care / Pastoral", blurb:"Carries and cares for people.",
+  d:{people:"high",vision:"med",execution:"med",detail:"med",drive:"low",structure:"low",autonomy:"med"}, wg:["Enablement","Discernment"]},
+ {key:"finisher",  name:"Quality / Finisher", blurb:"Closes things out well; holds the standard.",
+  d:{detail:"high",execution:"high",structure:"high",drive:"med",people:"low",vision:"low",autonomy:"med"}, wg:["Tenacity","Discernment"]}
+];
+
+let LIBOPEN=true;
+function toggleLib(){ LIBOPEN=!LIBOPEN; render(); }
+
+// best matches for one archetype over the current scope
+function topFor(a,n){
+ const scored=SC().map(x=>{const r=rfScore(x,a.d,a.wg);return r?{p:x,score:r.score}:null;})
+   .filter(Boolean).sort((x,y)=>y.score-x.score);
+ return scored.slice(0,n||3);
+}
+// load an archetype into the dials so the full ranking shows below
+function rfLoadArch(key){
+ const a=ARCHETYPES.find(x=>x.key===key); if(!a)return;
+ RF.d=Object.assign({},a.d); RF.wg=a.wg.slice(); RF.name=a.name; RF.notes="";
+ RF.recId=null; RF.preset="custom"; RFstatus="";
+ RF.jump=true; render();
+}
+
+function libraryHTML(){
+ const cards=ARCHETYPES.map(function(a){
+   const top=topFor(a,3);
+   const who=top.length
+     ? top.map((m,i)=>'<span class="libwho'+(i===0?' t':'')+'">'+m.p.n.split(" ")[0]+' '+m.score+'%</span>').join('')
+     : '<span style="color:#9aa6a2;font-size:12px">no scorable data in this scope</span>';
+   return '<button class="libcard" onclick="rfLoadArch(\''+a.key+'\')">'
+     +'<div class="libname">'+a.name+'</div>'
+     +'<div class="libblurb">'+a.blurb+'</div>'
+     +'<div class="libtop">'+who+'</div>'
+     +'<div class="libgo">See full ranking \u2192</div></button>';
+ }).join('');
+ const scopeName=scope==='lead'?'the leadership set':scope==='active'?'active staff':'inactive staff';
+ return '<div class="acc"><button class="acchead" onclick="toggleLib()">'
+   +'<span class="acctitle">Role library <span style="color:#9aa6a2;font-weight:400">\u00b7 who fits each role, across '+scopeName+'</span></span>'
+   +'<span class="accchev">'+(LIBOPEN?'\u25be':'\u25b8')+'</span></button>'
+   +(LIBOPEN?'<div class="accbody"><div class="libnote">These match the <b>working-style and gifting shape</b> a role needs \u2014 not technical skill, calling, season of life, or track record. An \u201cIT leader\u201d fit means someone wired to lead a systems function, <b>not</b> that they can run your network. Roles are defined by what the role demands, so the ranking isn\u2019t fitted to who happens to be here. Click any role to see the full ranked list and the burnout flags.</div>'
+   +'<div class="libgrid">'+cards+'</div></div>':'')
+   +'</div>';
 }
 
 function roleView(){
@@ -765,7 +854,10 @@ function roleView(){
    +'<button class="go" onclick="rfSave()">'+(RF.recId?'Update this role':'Save role')+'</button>'
    +(RF.recId?'<button class="chip" onclick="rfDelete()">Delete</button><button class="chip" onclick="rfLoad(\'\')">Start a new one</button>':'')
    +'<span style="font-size:13px">'+RFstatus+'</span></div></div>';
- return saveBar
+ return libraryHTML()
+  +'<h3 style="font-family:Newsreader,serif;font-size:22px;font-weight:500;margin:22px 0 4px">Or build a role yourself</h3>'
+  +'<p style="font-size:13px;color:var(--soft);margin:0 0 14px">Set the dials to describe any role, or start from a saved one. '+(RF.name?'<b>Editing: '+RF.name.replace(/"/g,"&quot;")+'</b>':'')+'</p>'
+  +saveBar
   +'<div class="rfbar"><label style="font-size:13px;font-weight:600;color:var(--soft)">Start from a template</label>'
   +'<select onchange="rfSetPreset(this.value)">'+presetOpts+'</select>'
   +'<span style="font-size:12.5px;color:#9aa6a2">Change any dial and it becomes Custom.</span></div>'
