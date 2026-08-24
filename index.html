@@ -228,6 +228,14 @@
   .cov.full{background:#e4efe3;color:var(--sg)}
   .cov.thin{background:#fdf3f1;color:var(--wg)}
   .readnote{font-size:11.5px;color:#9aa6a2;line-height:1.5;margin-top:4px}
+  .runlist{display:flex;flex-direction:column;gap:2px}
+  .runitem{border-radius:9px}
+  .runitem.open{background:var(--paper)}
+  .runhead{width:100%;display:flex;gap:9px;align-items:flex-start;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;padding:8px 10px;color:var(--ink)}
+  .runhead:hover{background:var(--paper);border-radius:9px}
+  .runchev{color:var(--soft);font-size:12px;line-height:1.6;flex:none}
+  .runtext{font-size:14.5px;line-height:1.55}
+  .rundetail{font-size:13.5px;line-height:1.62;color:var(--soft);padding:0 12px 12px 31px}
   .acc{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:8px;overflow:hidden}
   .acchead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:none;border:none;cursor:pointer;font-family:inherit;padding:16px 20px;text-align:left}
   .acchead:hover{background:var(--paper)}
@@ -887,6 +895,8 @@ let TH=new Set();
 function thToggle(i){ if(TH.has(i))TH.delete(i); else TH.add(i); render(); }
 let SYNTHOPEN=false;
 function toggleSynth(){ SYNTHOPEN=!SYNTHOPEN; render(); }
+let RUNOPEN=new Set();
+function runToggle(i){ if(RUNOPEN.has(i))RUNOPEN.delete(i); else RUNOPEN.add(i); render(); }
 
 // How this person is best LED — read from temperament + processing style.
 function leadRead(p){
@@ -1219,15 +1229,31 @@ function teamHTML(){
 
  /* ---------- 8. How to run it ---------- */
  let how=[];
+ const wgHave=g=>has(g).map(fn);
+ const wgMiss=g=>m.filter(x=>x.wg.length&&!x.wg.includes(g)).map(fn); // people assessed who don't have it
  const tenacity=has("Tenacity");
- how.push(tenacity.length?("<b>Finish line:</b> "+tenacity.map(fn).join(" and ")+" "+(tenacity.length>1?"are":"is")+" wired to close things out — give them the last mile explicitly."):"<b>Finish line:</b> nobody here is a natural finisher. Name who owns 'done' before you start, or this team will generate and stall.");
+ how.push(tenacity.length
+   ? {head:"<b>Finish line:</b> "+tenacity.map(fn).join(" and ")+" "+(tenacity.length>1?"are":"is")+" wired to close things out — give them the last mile explicitly.",
+      detail:"Working Genius calls Tenacity the drive to push through the final push and get things fully done. "+tenacity.map(fn).join(" and ")+" "+(tenacity.length>1?"carry":"carries")+" it here. The practical move: hand them the closing stretch on purpose rather than assuming it happens. Where a piece of work matters, say out loud who owns \u201cdone\u201d for it."}
+   : {head:"<b>Finish line:</b> nobody here is a natural finisher. Name who owns 'done' before you start, or this team will generate and stall.",
+      detail:"None of the people whose Working Genius is on file have Tenacity — the gift for grinding through to completion. Teams without it tend to start well and drift: lots of ideas and activity, but things quietly stall at 80%. This isn't a verdict on discipline; it's a gap in instinct. Fix it by naming a finisher for each workstream (even someone whose Tenacity is only competent, not a genius), setting explicit \u201cdone\u201d checkpoints, and reviewing what actually closed, not just what got started."});
  const galv=has("Galvanizing");
- how.push(galv.length?("<b>Buy-in:</b> "+galv.map(fn).join(" and ")+" can carry this to the wider org."):"<b>Buy-in:</b> no natural galvaniser — decisions made here may land flat elsewhere. Plan how they get sold.");
+ how.push(galv.length
+   ? {head:"<b>Buy-in:</b> "+galv.map(fn).join(" and ")+" can carry this to the wider org.",
+      detail:"Galvanizing is the gift for rallying people and creating momentum behind a decision. "+galv.map(fn).join(" and ")+" "+(galv.length>1?"have":"has")+" it, which means this group can not only decide but get others moving. Use them deliberately as the bridge outward — the ones who take what's decided here and sell it to the people who have to live with it."}
+   : {head:"<b>Buy-in:</b> no natural galvaniser — decisions made here may land flat elsewhere. Plan how they get sold.",
+      detail:"No one assessed here has Galvanizing — the instinct to rally people and build momentum. The risk isn't the quality of the decisions; it's the last mile of adoption. Good calls made in this room can land flat when they reach people who weren't in it. Compensate by planning the rollout as a distinct step: decide who communicates each decision, to whom, and how you'll know it took — don't assume a sound decision sells itself."});
  const wonder=has("Wonder");
- if(!wonder.length)how.push("<b>Watch the premise:</b> nobody instinctively asks whether you're solving the right problem. Start meetings by stating the question, not the task.");
- if(shifters.length>=Math.ceil(N/2))how.push("<b>Under load:</b> over half this group changes style when pressed — the team you plan with is not the team you'll get in a crisis. Talk about that before you're in one.");
+ if(!wonder.length)how.push(
+   {head:"<b>Watch the premise:</b> nobody instinctively asks whether you're solving the right problem. Start meetings by stating the question, not the task.",
+    detail:"Wonder is the gift for stepping back and asking whether you're even aimed at the right thing. With no one here wired for it, this group will tend to execute the brief as given and rarely challenge it — efficient, but exposed to solving the wrong problem well. Build the check in mechanically: open each significant meeting by stating the question you're trying to answer before jumping to tasks, and periodically ask an outsider with Wonder to pressure-test the premise."});
+ if(shifters.length>=Math.ceil(N/2))how.push(
+   {head:"<b>Under load:</b> over half this group changes style when pressed — the team you plan with is not the team you'll get in a crisis. Talk about that before you're in one.",
+    detail:"LivStyle reads a person's normal style and their style under pressure separately. For "+shifters.length+" of "+N+" people here those two differ — meaning under real stress they shift into a different mode than the one you see day to day: "+shifters.map(x=>fn(x)+" ("+x.lp+"\u2192"+x.lu+")").join(", ")+". The team dynamic you designed in calm can rearrange itself in a crisis. The move is to name it in advance — let each person say how they go under load — so nobody's crisis-mode self is a surprise."});
  const quiet=m.filter(x=>x.t&&x.t[0]==="I");
- if(quiet.length&&fastT)how.push("<b>Airtime:</b> "+quiet.map(fn).join(", ")+" process internally. Ask them directly, or you'll only hear half the team.");
+ if(quiet.length&&fastT)how.push(
+   {head:"<b>Airtime:</b> "+quiet.map(fn).join(", ")+" process internally. Ask them directly, or you'll only hear half the team.",
+    detail:"16 Personalities marks these people as introverts, who typically think before they speak rather than out loud. Paired with the faster, louder processors in this group, the quiet ones can go unheard — not because they have less to offer but because the room fills before they've formed their answer. Draw them out on purpose: send material ahead, ask them directly in the meeting, or collect input in writing so the loudest voice doesn't become the only one."});
 
  const dataNote=(wgKnown<N||csKnown<N||tKnown<N)?'<p class="disclaim" style="margin:0 0 14px">Data on file: Working Genius '+wgKnown+'/'+N+' · Strengths '+csKnown+'/'+N+' · 16 Types '+tKnown+'/'+N+'. Gaps below may reflect missing assessments rather than missing people.</p>':'';
 
@@ -1255,7 +1281,7 @@ function teamHTML(){
     +(dupes.length?'<p style="font-size:13px;color:var(--soft);margin-top:8px">Shared themes: '+dupes.map(e=>'<b>'+e[0]+'</b> \u00d7'+e[1]).join(", ")+'</p>':'')+'</div>'
   +'<div class="sec" style="--accent:var(--sg)"><h4><span class="dot"></span>Gifting in the room</h4><div class="gchips">'+giftChips+'</div></div>'
   +'<div class="sec" style="--accent:var(--wg)"><h4><span class="dot"></span>Risks worth naming</h4><ul>'+risks.map(x=>"<li>"+x+"</li>").join("")+'</ul></div>'
-  +'<div class="sec" style="--accent:var(--sg)"><h4><span class="dot"></span>How to run this team</h4><ul>'+how.map(x=>"<li>"+x+"</li>").join("")+'</ul></div>'
+  +'<div class="sec" style="--accent:var(--sg)"><h4><span class="dot"></span>How to run this team</h4><div class="runlist">'+how.map(function(x,ri){var open=RUNOPEN.has(ri);return '<div class="runitem'+(open?' open':'')+'"><button class="runhead" onclick="runToggle('+ri+')"><span class="runchev">'+(open?'\u25be':'\u25b8')+'</span><span class="runtext">'+x.head+'</span></button>'+(open?'<div class="rundetail">'+x.detail+'</div>':'')+'</div>';}).join("")+'</div></div>'
   +'</div><p class="disclaim">Built from partial, self-reported assessments. This is a planning aid for composing and running a team \u2014 a set of questions to take into the room, not a scorecard on the people in it.</p></div>';
 }
 
