@@ -228,6 +228,13 @@
   .cov.full{background:#e4efe3;color:var(--sg)}
   .cov.thin{background:#fdf3f1;color:var(--wg)}
   .readnote{font-size:11.5px;color:#9aa6a2;line-height:1.5;margin-top:4px}
+  .acc{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:8px;overflow:hidden}
+  .acchead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:none;border:none;cursor:pointer;font-family:inherit;padding:16px 20px;text-align:left}
+  .acchead:hover{background:var(--paper)}
+  .acctitle{font-family:"Newsreader",serif;font-size:19px;font-weight:500;color:var(--ink)}
+  .accchev{font-size:15px;color:var(--soft);flex:none}
+  .accbody{padding:2px 20px 18px;border-top:1px solid var(--line)}
+  .accbody .collective{margin-top:16px}
   .savebar{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
   .sbrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   @media(max-width:760px){.sbrow{grid-template-columns:1fr}}
@@ -773,6 +780,8 @@ function roleView(){
 
 let TH=new Set();
 function thToggle(i){ if(TH.has(i))TH.delete(i); else TH.add(i); render(); }
+let SYNTHOPEN=false;
+function toggleSynth(){ SYNTHOPEN=!SYNTHOPEN; render(); }
 
 // How this person is best LED — read from temperament + processing style.
 function leadRead(p){
@@ -845,6 +854,16 @@ function threadsView(){
    +'<div class="note" style="margin-bottom:22px"><b>How much to trust this.</b> The threads are my sentences about your people, so this is a reading of my own prose \u2014 one step from the assessments, two from the person. It is not a measurement. The test is simple: <b>read the threads below and try to find a dissenter.</b> If you find three, I am wrong \u2014 and you should say so.</div>'
  ) : '<div class="note" style="margin-bottom:22px">The written synthesis covers the leadership set. Below are the threads on file for '+scopeName+'.</div>';
 
+ const synthShell =
+    '<div class="acc">'
+    +'<button class="acchead" onclick="toggleSynth()">'
+      +'<span class="acctitle">The threads, read as a body '
+        +'<span style="color:#9aa6a2;font-weight:400">\u00b7 '+scopeName+' \u00b7 '+list.length+' people</span></span>'
+      +'<span class="accchev">'+(SYNTHOPEN?'\u25be':'\u25b8')+'</span>'
+    +'</button>'
+    +(SYNTHOPEN?'<div class="accbody">'+synthHTML+'</div>':'')
+    +'</div>';
+
  const cards = list.map(function(p){
    const i=P.indexOf(p);
    const open=TH.has(i);
@@ -863,8 +882,8 @@ function threadsView(){
      + panel + '</div>';
  }).join('');
 
- return '<div class="detail">'+synthHTML
-  +'<h3 style="font-family:Newsreader,serif;font-size:23px;font-weight:500;margin:6px 0 14px">All '+list.length+' threads</h3>'
+ return '<div class="detail">'+synthShell
+  +'<h3 style="font-family:Newsreader,serif;font-size:23px;font-weight:500;margin:18px 0 14px">All '+list.length+' threads</h3>'
   +'<div class="tstack">'+cards+'</div></div>';
 }
 
