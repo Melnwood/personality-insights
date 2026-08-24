@@ -795,7 +795,8 @@ function rfLoadArch(key){
  const a=ARCHETYPES.find(x=>x.key===key); if(!a)return;
  RF.d=Object.assign({},a.d); RF.wg=a.wg.slice(); RF.name=a.name; RF.notes="";
  RF.recId=null; RF.preset="custom"; RFstatus="";
- RF.jump=true; render();
+ render();
+ setTimeout(function(){var el=document.getElementById('rfmatches'); if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'start'});},0);
 }
 
 function libraryHTML(){
@@ -877,7 +878,7 @@ function roleView(){
   +'<div class="synth"><div class="sec" style="--accent:var(--wg)"><h4><span class="dot"></span>Working Genius this role needs</h4><div class="bar" style="margin:0">'+wgChips+'</div>'
   +'<p style="font-size:12.5px;color:var(--soft);margin-top:9px">If a required genius is someone\u2019s <b>frustration</b>, they get flagged \u2014 that pairing burns people out.</p></div></div>'
   +ideal
-  +'<h3 style="font-family:Newsreader,serif;font-size:22px;font-weight:500;margin:22px 0 12px">Best matches <span style="font-size:13px;color:var(--soft);font-family:Inter">\u00b7 '+scored.length+' scored</span></h3>'
+  +'<h3 id="rfmatches" style="font-family:Newsreader,serif;font-size:22px;font-weight:500;margin:22px 0 12px;scroll-margin-top:16px">Best matches'+(RF.name?' \u2014 '+RF.name.replace(/"/g,"&quot;"):'')+' <span style="font-size:13px;color:var(--soft);font-family:Inter">\u00b7 '+scored.length+' scored</span></h3>'
   +rows
   +'<p class="disclaim">A shortlist, not a decision. Fit scores read self-reported assessments \u2014 they cannot see character, calling, season of life, or track record. Use this to widen who you consider, then judge the person.</p>';
 }
