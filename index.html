@@ -1261,7 +1261,7 @@ function teamHTML(){
 
 function openPerson(i){cur=i;page="person";render();window.scrollTo(0,0);}
 function openTeam(){page="team";render();window.scrollTo(0,0);}
-function personHTML(i){const p=P[i],s=synth(p),dom=domainsOf(p.cs),tp=threadParts(p.kt);
+function personHTML(i){const p=P[i],rp=readProfile(p),dom=domainsOf(p.cs),tp=threadParts(p.kt);
  const hero=tp?'<div class="thread"><div class="lbl">Key Thread · the through-line across every lens</div><p>'+tp.head+'.</p>'+(tp.why?'<div class="why">'+tp.why+'</div>':'')+'</div>'
    :'<div class="thread empty"><div class="lbl">Key Thread</div><p>Emerges once more of this person\u2019s assessments are on file.</p></div>';
  return '<div class="detail"><button class="back" onclick="backToList()">\u2190 Back</button>'
@@ -1269,10 +1269,13 @@ function personHTML(i){const p=P[i],s=synth(p),dom=domainsOf(p.cs),tp=threadPart
   +hero
   +'<div class="cols"><div>'
 
-  +'<div class="synth">'
-  +'<div class="sec" style="--accent:var(--p16)"><h4><span class="dot"></span>How to work with them</h4><ul>'+s.work.map(x=>"<li>"+x+"</li>").join("")+'</ul></div>'
-  +'<div class="sec" style="--accent:var(--wg)"><h4><span class="dot"></span>Where they thrive</h4><p>'+s.thrive+'</p></div>'
-  +'<div class="sec" style="--accent:var(--cs)"><h4><span class="dot"></span>Watch-fors &amp; how to support</h4><ul>'+s.watch.map(x=>"<li>"+x+"</li>").join("")+'</ul></div></div>'
+  +'<div class="synth thpanel" style="margin-top:0;border-top:none;padding-top:0">'
+  +readBlock("Work with them", rp.work)
+  +readBlock("Lead them", rp.lead)
+  +readBlock("Watch-fors", rp.watch)
+  +readBlock("Where not to place them without a hard think", rp.avoid, " av")
+  +'<p class="readnote">Each line shows which assessments it draws on. Lines backed by more than one lens are where the assessments converge; a \u201cthin\u201d badge means only one lens had data.</p>'
+  +'</div>'
   +'</div><div>'
   +'<div class="frameworks">'
   +'<div class="fw" style="--accent:var(--liv)"><div class="t">LivStyle</div><div class="v">'+(p.lp||"—")+'<small>Under pressure: '+(p.lu||"—")+'</small></div></div>'
