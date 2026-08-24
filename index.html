@@ -214,6 +214,24 @@
   .tcard .tn{font-family:"Newsreader",serif;font-size:19px;margin-bottom:7px}
   .tcard p{font-size:14px;line-height:1.6;color:var(--ink)}
   .tcard .tlead{font-weight:700;color:var(--liv);display:inline-block;margin-top:4px}
+  .throw{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .thtoggle,.thopen{font-family:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 11px;cursor:pointer;color:var(--soft)}
+  .thtoggle:hover,.thopen:hover{color:var(--ink);border-color:var(--ink)}
+  .thpanel{margin-top:12px;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:12px}
+  .thn .thk{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);font-weight:700;display:block;margin-bottom:4px}
+  .thn p{font-size:13.5px;line-height:1.55}
+  .thn ul{margin:0;padding-left:16px}
+  .thn li{font-size:13.5px;line-height:1.5;margin:2px 0}
+  .thn.av .thk{color:var(--wg)}
+  .thn .src{font-size:10.5px;color:#9aa6a2;font-weight:600;white-space:nowrap}
+  .cov{font-size:9.5px;font-weight:700;letter-spacing:.03em;text-transform:none;color:var(--soft);background:#eef1ee;border-radius:999px;padding:1px 7px;margin-left:6px}
+  .cov.full{background:#e4efe3;color:var(--sg)}
+  .cov.thin{background:#fdf3f1;color:var(--wg)}
+  .readnote{font-size:11.5px;color:#9aa6a2;line-height:1.5;margin-top:4px}
+  .savebar{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+  .sbrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.sbrow{grid-template-columns:1fr}}
+  .sbf{min-width:0}
   .fl{display:block;font-size:12px;font-weight:600;color:var(--soft);margin:10px 0 5px}
   .fi{width:100%;font-family:inherit;font-size:14px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink)}
   textarea.fi{resize:vertical;line-height:1.5}
@@ -301,6 +319,7 @@ function signOut(){sessionStorage.removeItem('etk');location.reload();}
 let CAP={exec:false,admin:false}, CRED={l:"",p:""};
 function boot(data){
   P=data.people;
+  ROLES=data.roles||[];
   if(data.who){CAP.exec=!!data.who.exec;CAP.admin=!!data.who.admin;}
   applyCaps();
   document.getElementById('gate').style.display='none';
@@ -336,6 +355,147 @@ function synth(p){const out={};const dom=domainsOf(p.cs);
  if(p.t&&["ESTJ","ENTJ","ESTP"].includes(p.t))w.push("Decides fast — pair with someone who slows things down for people impact.");
  if(!w.length)w.push("Fill in remaining assessments to sharpen this read.");out.watch=w;
  return out;}
+
+
+/* ================= CONVERGENCE ENGINE =================
+   Reads ALL FIVE assessments and synthesises four practical reads.
+   Each read returns { points:[{text, from:[lenses]}], tension:[...], used, total }.
+   - A point backed by 2+ lenses is a convergence (shown with its sources).
+   - Where lenses disagree, it's surfaced as a tension, not averaged away.
+   - `used`/`total` label how many relevant lenses actually had data.
+   Lenses: LivStyle (categories + trait %s), 16P, Working Genius, Strengths, Spiritual Gifts. */
+
+const LENS={LIV:"LivStyle",P16:"16P",WG:"Wk Genius",CS:"Strengths",SG:"Sp Gifts"};
+
+// trait helpers — safe when a trait is missing
+function tr(p,k){ return (p.tr && typeof p.tr[k]==="number") ? p.tr[k] : null; }
+function hi(p,k,th){ const v=tr(p,k); return v!==null && v>= (th||60); }
+function lo(p,k,th){ const v=tr(p,k); return v!==null && v<= (th||35); }
+// which of a pair is dominant, only if the gap is real
+function lean(p,a,b,gap){ const x=tr(p,a),y=tr(p,b); if(x===null||y===null)return null; if(Math.abs(x-y)<(gap||12))return null; return x>y?a:b; }
+const T16grp=t=>{ if(!t)return null; const NT=["INTJ","INTP","ENTJ","ENTP"],NF=["INFJ","INFP","ENFJ","ENFP"],SJ=["ISTJ","ISFJ","ESTJ","ESFJ"],SP=["ISTP","ISFP","ESTP","ESFP"]; return NT.includes(t)?"NT":NF.includes(t)?"NF":SJ.includes(t)?"SJ":SP.includes(t)?"SP":null; };
+
+// merge points that say the same thing, unioning their sources, so a convergence reads as one line "· LivStyle + 16P"
+function fold(points){
+  const seen={};
+  points.forEach(pt=>{
+    const key=pt.k||pt.text.toLowerCase().slice(0,40);
+    if(seen[key]){ pt.from.forEach(f=>{ if(seen[key].from.indexOf(f)<0)seen[key].from.push(f); }); }
+    else seen[key]=Object.assign({},pt);
+  });
+  // sort: multi-lens convergences first
+  return Object.values(seen).sort((a,b)=>b.from.length-a.from.length);
+}
+
+function readProfile(p){
+  const dom=domainsOf(p.cs).map(d=>d[0]);
+  const grp=T16grp(p.t);
+  const R={ work:[], lead:[], watch:[], avoid:[] };
+
+  // lens availability per read (for the coverage label)
+  const has={ LIV_cat:!!(p.lp), LIV_tr:!!(p.tr&&Object.keys(p.tr).length), P16:!!p.t, WG:!!(p.wg&&p.wg.length), WGF:!!(p.wgf&&p.wgf.length), CS:!!(p.cs&&p.cs.length), SG:!!(p.sg&&p.sg.length) };
+
+  /* ---------- WORK WITH THEM ---------- */
+  // processing style: talk vs think (16P E/I + LivStyle External/Internal converge)
+  if(grp){ if(p.t[0]==="E") R.work.push({k:"talk",text:"Processes out loud — give them airtime to think in the room.",from:[LENS.P16]});
+           else R.work.push({k:"think",text:"Processes internally — give them the material ahead of time and a beat before you expect a read.",from:[LENS.P16]}); }
+  const ei=lean(p,"External","Internal",12);
+  if(ei==="External") R.work.push({k:"talk",text:"Processes out loud — give them airtime to think in the room.",from:[LENS.LIV]});
+  if(ei==="Internal") R.work.push({k:"think",text:"Processes internally — give them the material ahead of time and a beat before you expect a read.",from:[LENS.LIV]});
+  // pace / structure
+  const so=lean(p,"Orderly","Ideas",12);
+  if(hi(p,"Orderly")) R.work.push({k:"struct",text:"Wants a plan and clear sequence — ad-hoc, keep-it-loose settings cost them.",from:[LENS.LIV]});
+  if(hi(p,"Ideas")&&!hi(p,"Orderly")) R.work.push({k:"open",text:"Works best with room to explore — lead with the goal, not a rigid process.",from:[LENS.LIV]});
+  // head vs heart
+  if(hi(p,"Heart")) R.work.push({k:"heart",text:"Weighs the human impact first — frame decisions in terms of people, not just logic.",from:[LENS.LIV]});
+  // strengths domains
+  if(dom.includes("Relationship Building")) R.work.push({k:"trust",text:"Trust and personal connection come before the task.",from:[LENS.CS]});
+  if(dom.includes("Influencing")) R.work.push({k:"voice",text:"Give them a voice in the room — they help move others.",from:[LENS.CS]});
+  if(dom.includes("Executing")&&!dom.includes("Influencing")) R.work.push({k:"deliver",text:"Delivers reliably, often quietly — keep their contribution visible.",from:[LENS.CS]});
+  if(dom.includes("Strategic Thinking")) R.work.push({k:"early",text:"Bring them in early, before decisions are set.",from:[LENS.CS]});
+  // 16P working style (adds a source to whatever it echoes)
+  if(p.t&&T16[p.t]) R.work.push({k:(p.t[0]==="E"?"voice":"early"),text:T16[p.t][1].charAt(0).toUpperCase()+T16[p.t][1].slice(1)+".",from:[LENS.P16]});
+  // WG: where in the arc they like to sit
+  if(has.WG){ const st=new Set(p.wg.map(wgStage));
+    if(st.has("early")) R.work.push({k:"front",text:"Energised at the front end — questions and possibilities. Involve them before the plan hardens.",from:[LENS.WG]});
+    if(st.has("late")) R.work.push({k:"finish",text:"Energised at the delivery end — give them things to drive to done.",from:[LENS.WG]}); }
+
+  /* ---------- LEAD THEM ---------- */
+  if(grp==="NT") R.lead.push({k:"why",text:"Lead with the strategy and the why; give autonomy and respect their competence — don't dictate the how.",from:[LENS.P16]});
+  if(grp==="NF") R.lead.push({k:"meaning",text:"Lead through meaning and relationship; tie the work to purpose and people. Transactional direction loses them.",from:[LENS.P16]});
+  if(grp==="SJ") R.lead.push({k:"clarity",text:"Lead with clear expectations, stability and follow-through; honour their reliability.",from:[LENS.P16]});
+  if(grp==="SP") R.lead.push({k:"space",text:"Lead with real problems and room to move; give them stakes and freedom.",from:[LENS.P16]});
+  // autonomy vs direction (LivStyle) — converges with NT/SP or stands alone
+  if(hi(p,"Freedom")) R.lead.push({k:"why",text:"Needs real autonomy — hand them the outcome and get out of the how.",from:[LENS.LIV]});
+  if(hi(p,"Direction")||hi(p,"Prefers Process")) R.lead.push({k:"clarity",text:"Wants clear direction and a defined process — vague briefs leave them stuck.",from:[LENS.LIV]});
+  // affirmation axis — the sharpest leading signal
+  if(hi(p,"Self-Affirmed")) R.lead.push({k:"selfaff",text:"Self-affirming — won't need constant reassurance, but don't mistake quiet for disengaged.",from:[LENS.LIV]});
+  if(hi(p,"Other-Affirmed")||hi(p,"Recognition")) R.lead.push({k:"aff",text:"Runs on affirmation — regular, specific encouragement isn't optional for them, it's fuel.",from:[LENS.LIV]});
+  // fundamental needs — what makes them feel secure
+  if(hi(p,"Control")) R.lead.push({k:"control",text:"Needs a real sphere of ownership — being managed in their own area reads as distrust.",from:[LENS.LIV]});
+  if(hi(p,"Significance")) R.lead.push({k:"signif",text:"Needs to know their work matters and is seen — name the significance of what they carry.",from:[LENS.LIV]});
+  if(hi(p,"Security")) R.lead.push({k:"secure",text:"Needs stability and predictability — flag change early and explain it.",from:[LENS.LIV]});
+  // drivers
+  if(hi(p,"Power")||hi(p,"Attainment")) R.lead.push({k:"stretch",text:"Motivated by real responsibility and results — give them something to own and win.",from:[LENS.LIV]});
+  if(hi(p,"Affiliation")) R.lead.push({k:"belong",text:"Motivated by belonging — keep them connected to the team, not siloed.",from:[LENS.LIV]});
+
+  /* ---------- WATCH-FORS ---------- */
+  if(p.lp&&p.lu&&p.lp!==p.lu) R.watch.push({k:"shift",text:"Shifts under pressure: "+p.lp+" \u2192 "+p.lu+". The person you planned with isn't who shows up in a crisis.",from:[LENS.LIV]});
+  if(hi(p,"Avoiding")) R.watch.push({k:"avoid",text:"Tends to avoid conflict — problems may go unspoken until they're big. Ask directly.",from:[LENS.LIV]});
+  if(hi(p,"Competing")&&lo(p,"Collaborating")) R.watch.push({k:"compete",text:"Drives to win in disagreement — can steamroll quieter voices. Make space for them.",from:[LENS.LIV]});
+  if(grp==="NF"||dom.includes("Relationship Building")) R.watch.push({k:"harmony",text:"Prizes harmony — may soften hard truths. Invite the unvarnished version explicitly.",from:[grp==="NF"?LENS.P16:LENS.CS]});
+  if(grp==="NT") R.watch.push({k:"blunt",text:"Leads with logic — can read as cold when people need warmth. Watch the delivery in tender moments.",from:[LENS.P16]});
+  if(p.t&&["ESTJ","ENTJ","ESTP","ENTP"].includes(p.t)) R.watch.push({k:"fast",text:"Decides fast and out loud — slower processors get steamrolled unless you build in a pause.",from:[LENS.P16]});
+  if(has.WGF) R.watch.push({k:"drain",text:"Drained by "+p.wgf.join(" and ")+" — watch for burnout if the role is heavy on those.",from:[LENS.WG]});
+
+  /* ---------- WHERE NOT TO PLACE THEM ---------- */
+  const AV={Wonder:"work that hinges on constantly probing the status quo and sitting in open questions",
+    Invention:"roles that demand a steady stream of fresh ideas or building from a blank page",
+    Discernment:"roles resting on quick gut-level judgment of other people's ideas",
+    Galvanizing:"roles that live on rallying and motivating people to act",
+    Enablement:"roles built around constant responsive support and dropping everything to help",
+    Tenacity:"roles that succeed or fail on grinding through to the finish"};
+  if(has.WGF) p.wgf.forEach(g=>R.avoid.push({k:"wgf-"+g,text:"Actively drains them: "+AV[g]+".",from:[LENS.WG]}));
+  // LivStyle-based placement cautions (independent lens — can converge with WG)
+  if(lo(p,"Orderly")) R.avoid.push({k:"lowstruct",text:"Runs low on structure — a role that's all process, order and follow-through will grind on them.",from:[LENS.LIV]});
+  if(lo(p,"Freedom")&&hi(p,"Direction")) R.avoid.push({k:"needsdir",text:"Wants direction — don't drop them somewhere with no defined path and expect them to self-start.",from:[LENS.LIV]});
+  if(lo(p,"Heart")) R.avoid.push({k:"lowheart",text:"Logic-first — think twice before a role whose core is pastoral care and emotional attunement.",from:[LENS.LIV]});
+  if(hi(p,"Freedom")&&lo(p,"Consistency")) R.avoid.push({k:"routine",text:"Chafes at routine — a highly repetitive, consistency-heavy seat will wear them down.",from:[LENS.LIV]});
+  // 16P + phase gaps as a fallback convergence
+  if(has.WG){ const st=new Set(p.wg.map(wgStage));
+    if(!st.has("late")&&!has.WGF) R.avoid.push({k:"lowstruct",text:"Genius stops before the finish line — don't make closing-the-work the core of their role without a finisher beside them.",from:[LENS.WG]}); }
+
+  // fold convergences, compute coverage
+  const relevant={
+    work:[has.P16,has.LIV_tr,has.CS,has.WG],
+    lead:[has.P16,has.LIV_tr],
+    watch:[has.LIV_cat,has.LIV_tr,has.P16,has.WG],
+    avoid:[has.WGF||has.WG,has.LIV_tr]
+  };
+  const out={};
+  ["work","lead","watch","avoid"].forEach(key=>{
+    const pts=fold(R[key]);
+    const used=relevant[key].filter(Boolean).length, total=relevant[key].length;
+    out[key]={points:pts, used, total};
+  });
+  return out;
+}
+
+// coverage badge — honest about how many lenses fed a read
+function covBadge(used,total){
+  const label=used<=1?"thin — 1 lens":used+" of "+total+" lenses";
+  const cls=used<=1?"cov thin":used>=total?"cov full":"cov";
+  return '<span class="'+cls+'">'+label+'</span>';
+}
+// render a read block: points with their sources, coverage badge
+function readBlock(title,block,accentClass){
+  if(!block.points.length) return '<div class="thn'+(accentClass||'')+'"><span class="thk">'+title+' '+covBadge(block.used,block.total)+'</span><p style="color:#9aa6a2">Not enough on file yet — needs more assessments.</p></div>';
+  const lis=block.points.map(pt=>{
+    const src=pt.from.length? ' <span class="src">'+pt.from.join(" + ")+'</span>':'';
+    return '<li>'+pt.text+src+'</li>';
+  }).join('');
+  return '<div class="thn'+(accentClass||'')+'"><span class="thk">'+title+' '+covBadge(block.used,block.total)+'</span><ul>'+lis+'</ul></div>';
+}
 
 let page="list",cur=null;
 let mode="people",scope="lead",filter={type:null,grp:null,q:""},cmpA=0,cmpB=1,team=[];
@@ -469,10 +629,50 @@ const RF_PRESETS={
  finisher:{label:"Quality / finisher",d:{detail:"high",execution:"high",structure:"high",drive:"med",people:"low",vision:"low",autonomy:"med"},wg:["Tenacity","Discernment"]},
  connector:{label:"Connector / recruiter",d:{people:"high",drive:"med",vision:"med",execution:"med",autonomy:"med",structure:"low",detail:"low"},wg:["Galvanizing","Invention"]},
  custom:{label:"Custom — set the dials yourself",d:{},wg:[]}};
-let RF={preset:"leader",d:Object.assign({},RF_PRESETS.leader.d),wg:RF_PRESETS.leader.wg.slice(),open:null};
+let RF={preset:"leader",d:Object.assign({},RF_PRESETS.leader.d),wg:RF_PRESETS.leader.wg.slice(),open:null,name:"",notes:"",recId:null};
+let ROLES=[], RFstatus="";
 
-function rfSetPreset(k){RF.preset=k;const p=RF_PRESETS[k];RF.d=Object.assign({},p.d);RF.wg=p.wg.slice();render();}
-function rfSet(dim,lv){RF.d[dim]=RF.d[dim]===lv?undefined:lv;RF.preset="custom";render();}
+function rfSetPreset(k){RF.preset=k;const p=RF_PRESETS[k];RF.d=Object.assign({},p.d);RF.wg=p.wg.slice();RF.name="";RF.notes="";RF.recId=null;RFstatus="";render();}
+function rfLoad(id){
+  if(!id){RF.recId=null;RF.name="";RF.notes="";RFstatus="";render();return;}
+  const r=ROLES.find(x=>x.id===id); if(!r)return;
+  RF.recId=r.id; RF.name=r.name; RF.notes=r.notes||"";
+  RF.d=Object.assign({},r.d); RF.wg=(r.wg||[]).slice(); RF.preset="custom"; RFstatus="";
+  render();
+}
+function rfName(v){RF.name=v;}
+function rfNotes(v){RF.notes=v;}
+async function rfSave(){
+  if(!RF.name.trim()){RFstatus='<span style="color:#b4453a">Give the role a name first.</span>';render();return;}
+  RFstatus='Saving\u2026'; render();
+  try{
+    const res=await fetch('/.netlify/functions/roles',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({login:CRED.l,password:CRED.p,recordId:RF.recId,name:RF.name,notes:RF.notes,d:RF.d,wg:RF.wg})});
+    const dd=await res.json();
+    if(!res.ok)throw new Error((dd.error||'Save failed')+(dd.detail?' \u2014 '+String(dd.detail).slice(0,200):''));
+    const fresh=await load(CRED.l,CRED.p);
+    P=fresh.people; ROLES=fresh.roles||[];
+    RF.recId=dd.id;
+    RFstatus='<span style="color:#2f7a4d">Saved.</span>';
+    render();
+  }catch(e){RFstatus='<span style="color:#b4453a">'+e.message+'</span>';render();}
+}
+async function rfDelete(){
+  if(!RF.recId)return;
+  RFstatus='Deleting\u2026'; render();
+  try{
+    const res=await fetch('/.netlify/functions/roles',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({login:CRED.l,password:CRED.p,action:'delete',recordId:RF.recId})});
+    const dd=await res.json();
+    if(!res.ok)throw new Error(dd.error||'Delete failed');
+    const fresh=await load(CRED.l,CRED.p);
+    P=fresh.people; ROLES=fresh.roles||[];
+    RF.recId=null; RF.name=""; RF.notes="";
+    RFstatus='<span style="color:#2f7a4d">Deleted.</span>';
+    render();
+  }catch(e){RFstatus='<span style="color:#b4453a">'+e.message+'</span>';render();}
+}
+function rfSet(dim,lv){RF.d[dim]=RF.d[dim]===lv?undefined:lv;RF.preset="custom";RFstatus="";render();}
 function rfHelp(dim){RF.open=RF.open===dim?null:dim;render();}
 function rfWG(g){const i=RF.wg.indexOf(g);if(i>-1)RF.wg.splice(i,1);else RF.wg.push(g);RF.preset="custom";render();}
 
@@ -548,7 +748,18 @@ function roleView(){
      +'<div class="fitbar"><div style="width:'+m.score+'%"></div></div></div></div>';
  }).join(''):'<div class="hint">Nobody in this scope has enough data to score. Try the Leadership set.</div>';
 
- return '<div class="rfbar"><label style="font-size:13px;font-weight:600;color:var(--soft)">Start from a template</label>'
+ const savedOpts='<option value="">\u2014 New role \u2014</option>'
+   +ROLES.map(r=>'<option value="'+r.id+'" '+(RF.recId===r.id?'selected':'')+'>'+r.name.replace(/"/g,'&quot;')+'</option>').join('');
+ const saveBar='<div class="savebar"><div class="sbrow">'
+   +'<div class="sbf"><label class="fl" style="margin-top:0">Saved roles</label><select class="fi" onchange="rfLoad(this.value)">'+savedOpts+'</select></div>'
+   +'<div class="sbf"><label class="fl" style="margin-top:0">Name this role</label><input class="fi" placeholder="e.g. Country Director \u2014 Albania" value="'+(RF.name||'').replace(/"/g,'&quot;')+'" oninput="rfName(this.value)"></div>'
+   +'</div><div class="sbf"><label class="fl">Notes (optional)</label><input class="fi" placeholder="Context \u2014 who it\u2019s for, when you last used it" value="'+(RF.notes||'').replace(/"/g,'&quot;')+'" oninput="rfNotes(this.value)"></div>'
+   +'<div style="display:flex;gap:9px;align-items:center;margin-top:12px;flex-wrap:wrap">'
+   +'<button class="go" onclick="rfSave()">'+(RF.recId?'Update this role':'Save role')+'</button>'
+   +(RF.recId?'<button class="chip" onclick="rfDelete()">Delete</button><button class="chip" onclick="rfLoad(\'\')">Start a new one</button>':'')
+   +'<span style="font-size:13px">'+RFstatus+'</span></div></div>';
+ return saveBar
+  +'<div class="rfbar"><label style="font-size:13px;font-weight:600;color:var(--soft)">Start from a template</label>'
   +'<select onchange="rfSetPreset(this.value)">'+presetOpts+'</select>'
   +'<span style="font-size:12.5px;color:#9aa6a2">Change any dial and it becomes Custom.</span></div>'
   +'<div class="rfgrid">'+dials+'</div>'
@@ -558,6 +769,42 @@ function roleView(){
   +'<h3 style="font-family:Newsreader,serif;font-size:22px;font-weight:500;margin:22px 0 12px">Best matches <span style="font-size:13px;color:var(--soft);font-family:Inter">\u00b7 '+scored.length+' scored</span></h3>'
   +rows
   +'<p class="disclaim">A shortlist, not a decision. Fit scores read self-reported assessments \u2014 they cannot see character, calling, season of life, or track record. Use this to widen who you consider, then judge the person.</p>';
+}
+
+let TH=new Set();
+function thToggle(i){ if(TH.has(i))TH.delete(i); else TH.add(i); render(); }
+
+// How this person is best LED — read from temperament + processing style.
+function leadRead(p){
+ const t=p.t; if(!t) return "Not enough personality data on file to read how they\u2019re best led \u2014 ask them directly.";
+ const NT=["INTJ","INTP","ENTJ","ENTP"],NF=["INFJ","INFP","ENFJ","ENFP"],SJ=["ISTJ","ISFJ","ESTJ","ESFJ"],SP=["ISTP","ISFP","ESTP","ESFP"];
+ let b="";
+ if(NT.includes(t))b="Lead with the strategy and the why; give autonomy and respect their competence \u2014 don\u2019t dictate the how.";
+ else if(NF.includes(t))b="Lead through meaning and relationship; tie the work to purpose and people. Purely transactional direction loses them.";
+ else if(SJ.includes(t))b="Lead with clear expectations, stability and follow-through; honour their reliability. Ambiguity and sudden pivots unsettle them.";
+ else if(SP.includes(t))b="Lead with real problems and room to move; give them stakes and freedom. Rigid process and over-planning frustrate them.";
+ b+= t[0]==="I" ? " Give them time to process before asking for a decision." : " Let them think out loud \u2014 they process by talking.";
+ return b;
+}
+// Where NOT to place them without a hard think \u2014 from Working Genius frustrations,
+// falling back to the phase their genius doesn\u2019t cover.
+function avoidRead(p){
+ const AV={Wonder:"work that hinges on constantly probing the status quo and sitting in open questions",
+  Invention:"roles that demand a steady stream of fresh ideas or building from a blank page",
+  Discernment:"roles resting on quick gut-level judgment of other people\u2019s ideas",
+  Galvanizing:"roles that live on rallying and motivating people to act",
+  Enablement:"roles built around constant responsive support and dropping everything to help",
+  Tenacity:"roles that succeed or fail on grinding through to the finish"};
+ if(p.wgf&&p.wgf.length)
+   return "Actively drains them \u2014 think hard before placing them in "+p.wgf.map(g=>AV[g]||g.toLowerCase()).join("; or ")+".";
+ if(p.wg&&p.wg.length){
+   const st=new Set(p.wg.map(wgStage)),miss=[];
+   if(!st.has("early"))miss.push("blue-sky ideation and question-framing");
+   if(!st.has("mid"))miss.push("rallying people and making the judgment calls");
+   if(!st.has("late"))miss.push("the grind of support and finishing");
+   if(miss.length)return "No frustrations on file, but their genius doesn\u2019t cover "+miss.join(", or ")+" \u2014 don\u2019t build their role around that without a partner who has it.";
+ }
+ return "No Working Genius frustrations on file \u2014 worth asking what work reliably drains them before a major placement.";
 }
 
 function threadsView(){
@@ -600,8 +847,20 @@ function threadsView(){
 
  const cards = list.map(function(p){
    const i=P.indexOf(p);
-   return '<div class="tcard click" onclick="openPerson('+i+')"><div class="tn">'+p.n+' <span style="color:#9aa6a2;font-weight:400;font-size:12px">'+p.g+'</span></div>'
-     +'<p>'+p.kt.replace(/Thread:/,'<br><span class="tlead">Thread:</span>')+'</p></div>';
+   const open=TH.has(i);
+   const rp = open ? readProfile(p) : null;
+   const panel = open ? '<div class="thpanel">'
+     +readBlock("Work with them", rp.work)
+     +readBlock("Lead them", rp.lead)
+     +readBlock("Watch-fors", rp.watch)
+     +readBlock("Where not to place them without a hard think", rp.avoid, " av")
+     +'<p class="readnote">Each line shows which assessments it draws on. Lines backed by more than one lens are where the assessments converge; a "thin" badge means only one lens had data.</p>'
+     +'</div>' : '';
+   return '<div class="tcard"><div class="tn">'+p.n+' <span style="color:#9aa6a2;font-weight:400;font-size:12px">'+p.g+'</span></div>'
+     +'<p>'+p.kt.replace(/Thread:/,'<br><span class="tlead">Thread:</span>')+'</p>'
+     +'<div class="throw"><button class="thtoggle" onclick="thToggle('+i+')">'+(open?'\u25be Hide working notes':'\u25b8 How to work with &amp; lead them')+'</button>'
+     +'<button class="thopen" onclick="openPerson('+i+')">Full profile \u2192</button></div>'
+     + panel + '</div>';
  }).join('');
 
  return '<div class="detail">'+synthHTML

@@ -119,7 +119,18 @@ The **Role fit** tab reverses the dashboard: instead of reading a person, you de
 - Everyone in the current scope is ranked by fit, with reasons.
 
 Scoring is deterministic — no API key, no cost. It weights LivStyle traits most heavily,
-then Working Genius, then thread motion.
+then Working Genius.
+
+### Saving role profiles
+
+Name a role and hit **Save role** and it's stored in the **Role Profiles** table in the base.
+The dropdown at the top of the tab loads any saved role back — dials, Working Genius and all.
+Loading one turns the button into **Update this role**, so re-saving overwrites rather than
+duplicating. **Delete** removes it; **Start a new one** clears the identity so your next save
+creates a fresh record.
+
+Saved roles are also readable and editable directly in Airtable — the seven dials are plain
+High / Medium / Low columns. Saving requires `Executive`.
 
 **The burnout flag:** if a role requires a genius that is someone's *frustration*, they're
 flagged in red. A person can score well on paper and still be drained by the job — this is

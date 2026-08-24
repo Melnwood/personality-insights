@@ -7,6 +7,8 @@
 const BASE_ID = "apppGh1toMfYP7NGK";
 const ASSESSMENTS = "tblVTZNf2RDVg97r5";
 const LEADERS = "tbl0q8SlBoLBqL5dB";
+const ROLES = "tbldA0KVBqTSgaZPn";
+const DIALS = ["Drive", "People", "Structure", "Detail", "Vision", "Execution", "Autonomy"];
 
 const FIELDS = [
   "Full Name", "Division", "Country", "Status",
@@ -24,8 +26,14 @@ const FIELDS = [
   "Motivation Why: Attainment",
   "Motivation How: Ideas", "Motivation How: Freedom", "Motivation How: Consistency",
   "Motivation How: Self-Affirmed", "Motivation How: Task Completion", "Motivation How: Prefers Process",
-  "Conflict Mngmt: Collaborating", "Conflict Mngmt: Competing",
+  "Conflict Mngmt: Collaborating", "Conflict Mngmt: Competing", "Conflict Mngmt: Avoiding",
+  "Conflict Mngmt: Accommodating",
   "C.A.R.E. Mindset: Creative", "C.A.R.E. Mindset: Refining", "C.A.R.E. Mindset: Engaging",
+  // Needs + affirmation + drivers — used for the "how to lead them" read
+  "Fundamental Needs: Significance", "Fundamental Needs: Control", "Fundamental Needs: Security",
+  "Motivation How: Direction", "Motivation How: Other-Affirmed",
+  "Motivation Why: Recognition", "Motivation Why: Compliance",
+  "Processing Blueprint: External", "Processing Blueprint: Internal",
 ];
 
 // Airtable percent fields can come back as 0-1 or 0-100 depending on how they were
@@ -51,9 +59,20 @@ const TRAITS = {
   "Prefers Process": "Motivation How: Prefers Process",
   Collaborating: "Conflict Mngmt: Collaborating",
   Competing: "Conflict Mngmt: Competing",
+  Avoiding: "Conflict Mngmt: Avoiding",
+  Accommodating: "Conflict Mngmt: Accommodating",
   Creative: "C.A.R.E. Mindset: Creative",
   Refining: "C.A.R.E. Mindset: Refining",
   Engaging: "C.A.R.E. Mindset: Engaging",
+  Significance: "Fundamental Needs: Significance",
+  Control: "Fundamental Needs: Control",
+  Security: "Fundamental Needs: Security",
+  Direction: "Motivation How: Direction",
+  "Other-Affirmed": "Motivation How: Other-Affirmed",
+  Recognition: "Motivation Why: Recognition",
+  Compliance: "Motivation Why: Compliance",
+  External: "Processing Blueprint: External",
+  Internal: "Processing Blueprint: Internal",
 };
 
 const asArray = (v) => (Array.isArray(v) ? v : v ? [v] : []);
@@ -153,11 +172,41 @@ exports.handler = async (event) => {
 
     people.sort((a, b) => a.n.localeCompare(b.n));
 
+    // ---- Saved role profiles ----
+    let roles = [];
+    try {
+      const rd = await at(ROLES, { pageSize: 100 }, TOKEN);
+      roles = rd.records
+        .filter((r) => (r.fields || {})["Role Name"])
+        .map((r) => {
+          const x = r.fields || {};
+          const d = {};
+          DIALS.forEach((k) => {
+            const v = x[k];
+            if (v === "High") d[k.toLowerCase()] = "high";
+            else if (v === "Medium") d[k.toLowerCase()] = "med";
+            else if (v === "Low") d[k.toLowerCase()] = "low";
+          });
+          return {
+            id: r.id,
+            name: x["Role Name"],
+            notes: x["Notes"] || "",
+            d,
+            wg: asArray(x["WG Needed"]),
+            by: x["Saved By"] || "",
+          };
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+    } catch (e) {
+      roles = []; // saved roles are a nice-to-have; never block the dashboard
+    }
+
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
       body: JSON.stringify({
         people,
+        roles,
         who: { name: f["Name"] || login, role: f["Role"] || "", exec: isExec, admin: isAdmin },
         fetched: new Date().toISOString(),
       }),
