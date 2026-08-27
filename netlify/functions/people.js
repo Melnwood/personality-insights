@@ -143,7 +143,10 @@ exports.handler = async (event) => {
     const people = [];
     let offset;
     do {
-      const data = await at(ASSESSMENTS, { pageSize: 100, "fields[]": FIELDS, offset }, TOKEN);
+      // Fetch whatever fields exist (no explicit fields[] list): Airtable simply
+      // omits any that aren't present, so a not-yet-created column can never crash
+      // the whole roster load. The mapping below already tolerates missing fields.
+      const data = await at(ASSESSMENTS, { pageSize: 100, offset }, TOKEN);
       data.records.forEach((r) => {
         const x = r.fields || {};
         const name = x["Full Name"];
