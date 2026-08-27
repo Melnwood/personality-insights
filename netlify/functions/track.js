@@ -60,10 +60,27 @@ exports.handler = async (event) => {
     if (typeof body.growth === "string") fields["Growth Notes"] = body.growth;
     fields["Plan Updated"] = today;
 
-    const result = await at(ASSESS, {
-      method: "PATCH",
-      body: JSON.stringify({ records: [{ id: body.recordId, fields }], typecast: true }),
-    }, TOKEN);
+    // Resilient write: if an optional field (plan/focus/growth/date) doesn't exist
+    // in Airtable yet, strip it and retry — so the core tracking still saves. Only
+    // "Dev Tracking" is truly required; it's never stripped.
+    async function patchResilient(recordId, allFields) {
+      let attempt = Object.assign({}, allFields);
+      for (let i = 0; i < 6; i++) {
+        try {
+          return await at(ASSESS, { method: "PATCH", body: JSON.stringify({ records: [{ id: recordId, fields: attempt }], typecast: true }) }, TOKEN);
+        } catch (e) {
+          const m = String(e).match(/Unknown field name:[^A-Za-z]*([A-Za-z][A-Za-z ]*[A-Za-z])/i);
+          const bad = m && m[1];
+          if (bad && bad !== "Dev Tracking" && Object.prototype.hasOwnProperty.call(attempt, bad) && Object.keys(attempt).length > 1) {
+            delete attempt[bad];
+            continue;
+          }
+          throw e;
+        }
+      }
+      throw new Error("Could not save after stripping unknown fields.");
+    }
+    const result = await patchResilient(body.recordId, fields);
 
     return { statusCode: 200, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
       body: JSON.stringify({ ok: true, id: result.records[0].id, by: meName, date: today }) };
