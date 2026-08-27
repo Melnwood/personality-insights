@@ -19,6 +19,7 @@ const WRITABLE = new Set([
   "SG 1", "SG 2", "SG 3", "SG Test",
   "Key Thread",
   "Leadership Set",
+  "Development Focus", "Development Plan", "Growth Notes", "Plan Updated",
 ]);
 
 async function at(path, opts, token) {
@@ -88,6 +89,12 @@ exports.handler = async (event) => {
 
     if (!Object.keys(fields).length) {
       return { statusCode: 400, body: JSON.stringify({ error: "Nothing to save." }) };
+    }
+
+    // Stamp the plan date whenever any development-plan field is being saved,
+    // so the E-team can see how current a plan is (staleness is a real risk).
+    if (["Development Focus", "Development Plan", "Growth Notes"].some((k) => k in fields)) {
+      fields["Plan Updated"] = new Date().toISOString().slice(0, 10);
     }
 
     // typecast lets Airtable accept a new single-select option (e.g. a new Country)

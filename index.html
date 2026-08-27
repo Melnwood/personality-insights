@@ -223,6 +223,65 @@
   .thn ul{margin:0;padding-left:16px}
   .thn li{font-size:13.5px;line-height:1.5;margin:2px 0}
   .thn.av .thk{color:var(--wg)}
+  .dp{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:4px 0 20px}
+  .dphead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .dplbl{font-family:"Newsreader",serif;font-size:20px;font-weight:500;color:var(--ink)}
+  .dpstamp{font-size:11.5px;color:var(--soft);font-weight:600}
+  .dpstamp.stale{color:var(--wg)}
+  .dpfocus{font-size:16px;line-height:1.5;color:var(--ink);font-weight:500;margin-bottom:14px}
+  .dpgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:720px){.dpgrid{grid-template-columns:1fr}}
+  .dpk{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);font-weight:700;display:block;margin-bottom:5px}
+  .dpcol p{font-size:14px;line-height:1.6}
+  .dpempty{font-size:13.5px;color:var(--soft);line-height:1.6}
+  .dpedges{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+  /* development tracking */
+  .tkhero{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .tcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+  .tcardx{text-align:left;font-family:inherit;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px 18px;cursor:pointer;transition:.12s;display:block;width:100%}
+  .tcardx:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--ink)}
+  .tcardx.stale{border-color:#e7c9c4;background:#fdf8f7}
+  .tcx-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+  .tcx-name{font-family:"Newsreader",serif;font-size:19px;font-weight:500;color:var(--ink)}
+  .tcx-dev{font-size:11.5px;color:var(--soft)}
+  .tcx-when{font-size:11px;font-weight:600;color:var(--soft);white-space:nowrap}
+  .tcx-when.stale{color:var(--wg)}
+  .tcx-help{font-size:13px;font-style:italic;color:var(--ink);margin:2px 0 12px;line-height:1.4}
+  .tgrps{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+  @media(max-width:520px){.tgrps{grid-template-columns:1fr 1fr}}
+  .tgrp{background:var(--paper);border-radius:9px;padding:8px 9px}
+  .tgn{font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);font-weight:700}
+  .tgv{font-size:18px;font-weight:600;font-family:"Newsreader",serif;display:flex;align-items:baseline;gap:5px}
+  .arw{font-size:10.5px;font-weight:700}
+  .arw.up{color:var(--sg)} .arw.dn{color:var(--wg)} .arw.flat{color:#b8c0bd}
+  .tksug{background:#fbf3dd;border:1px solid #ecd9a6;border-radius:12px;padding:14px 16px;margin-bottom:18px}
+  .tksug ul{margin:6px 0 0;padding-left:16px}
+  .tksug li{font-size:13.5px;line-height:1.55;margin:3px 0}
+  .tkfields{margin-bottom:16px}
+  .slbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px;margin-top:8px;margin-bottom:12px}
+  .sliders{display:grid;grid-template-columns:1fr 1fr;gap:14px 26px}
+  @media(max-width:720px){.sliders{grid-template-columns:1fr}}
+  .slgroup h4{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);font-weight:700;display:flex;align-items:center;gap:7px;margin:6px 0 8px}
+  .slgroup h4 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .slrow{margin-bottom:11px}
+  .sllab{display:flex;flex-direction:column;margin-bottom:3px}
+  .slname{font-size:13.5px;font-weight:600;color:var(--ink)}
+  .slhi{font-size:11px;color:#9aa6a2;line-height:1.3}
+  .slctl{display:flex;align-items:center;gap:10px}
+  .slctl input[type=range]{flex:1;accent-color:var(--ink)}
+  /* colour-scale sliders: filled portion coloured by the score */
+  .slctl input[type=range].scale{-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;background:linear-gradient(90deg,var(--c) 0%,var(--c) calc((var(--fill,50%))),#e6eae6 calc((var(--fill,50%))),#e6eae6 100%);outline:none}
+  .slctl input[type=range].scale::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--c);cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+  .slctl input[type=range].scale::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--c);cursor:pointer}
+  .slctl.targ input[type=range]{accent-color:#b8c0bd}
+  .slval{font-size:15px;font-weight:700;font-family:"Newsreader",serif;min-width:16px;text-align:center}
+  .slgap{font-size:10.5px;color:var(--soft);font-weight:600;white-space:nowrap}
+  .sltarg{font-size:10.5px;color:#9aa6a2;font-weight:600;white-space:nowrap}
+  .histbox{margin-top:20px;border-top:1px solid var(--line);padding-top:14px}
+  .hrow{padding:8px 0;border-bottom:1px solid var(--line)}
+  .hd{font-size:12px;font-weight:600;color:var(--soft)}
+  .hv{font-size:14px;font-weight:600;font-family:"Newsreader",serif;margin-top:2px}
+  .hn{font-size:12.5px;color:var(--soft);margin-top:3px;line-height:1.45}
   .thn .src{font-size:10.5px;color:#9aa6a2;font-weight:600;white-space:nowrap}
   .cov{font-size:9.5px;font-weight:700;letter-spacing:.03em;text-transform:none;color:var(--soft);background:#eef1ee;border-radius:999px;padding:1px 7px;margin-left:6px}
   .cov.full{background:#e4efe3;color:var(--sg)}
@@ -300,6 +359,7 @@
     <button class="mode" data-m="team" onclick="setMode('team')">Build a team</button>
     <button class="mode" data-m="threads" onclick="setMode('threads')">Threads</button>
     <button class="mode" data-m="role" onclick="setMode('role')">Role fit</button>
+    <button class="mode" data-m="track" onclick="setMode('track')">Development</button>
     <button class="mode" data-m="manage" onclick="setMode('manage')" style="display:none">Manage profiles</button>
    </div>
   </div>
@@ -541,7 +601,7 @@ function renderScope(){
  document.getElementById('scopebar').innerHTML=SCOPES.map(function(x){
   return '<button class="'+(scope===x[0]?'on':'')+'" onclick="setScope(\''+x[0]+'\')">'+x[1]+' <span class="ct">'+scopeCount(x[0])+'</span></button>';
  }).join('');}
-function setMode(m){mode=m;page="list";cur=null;document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.m===m));document.body.classList.toggle('pick',m==='team');render();}
+function setMode(m){mode=m;page=(m==='track')?"track":"list";cur=null;if(m==='track')TKcur=null;document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.m===m));document.body.classList.toggle('pick',m==='team');render();}
 function applyCaps(){
   document.querySelectorAll('.mode').forEach(function(b){
     const m=b.dataset.m;
@@ -573,7 +633,7 @@ function peopleView(){
 function cardList(list,pick){return list.map(p=>{const i=P.indexOf(p);const tp=threadParts(p.kt);
  return '<div class="person '+(team.includes(i)?"sel":"")+'" onclick="'+(pick?"toggleTeam("+i+")":"openPerson("+i+")")+'"><span class="tick">\u2713</span><h3>'+p.n+(scope!=='lead'&&p.lead?'<span class="star" title="Leadership set">\u2605</span>':'')+(scope==='inactive'?'<span class="inact">inactive</span>':'')+'</h3><div class="grp">'+p.g+'</div>'
  +(tp?'<div class="ktline">'+tp.head+'.</div>':'')
- +'<div class="badges">'+(p.lp?'<span class="b liv">'+p.lp+'</span>':'<span class="b empty">LivStyle</span>')+(p.t?'<span class="b p16">'+p.t+(p.id16?"-"+p.id16:"")+'</span>':'<span class="b empty">16 Types</span>')+(p.wg.length?'<span class="b wg">'+p.wg.join(" · ")+'</span>':'<span class="b empty">Wk. Genius</span>')+(p.sg.length?'<span class="b sg">'+p.sg[0]+'…</span>':'<span class="b empty">Sp. Gifts</span>')+'</div></div>';}).join('')||'<div class="hint">No one matches those filters.</div>';}
+ +'<div class="badges">'+(p.lp?'<span class="b liv">'+p.lp+'</span>':'<span class="b empty">LivStyle</span>')+(p.t?'<span class="b p16">'+p.t+(p.id16?"-"+p.id16.charAt(0):"")+'</span>':'<span class="b empty">16 Types</span>')+(p.wg.length?'<span class="b wg">'+p.wg.join(" · ")+'</span>':'<span class="b empty">Wk. Genius</span>')+(p.sg.length?'<span class="b sg">'+p.sg[0]+'…</span>':'<span class="b empty">Sp. Gifts</span>')+'</div></div>';}).join('')||'<div class="hint">No one matches those filters.</div>';}
 function setType(k){filter.type=(k==='all')?null:(filter.type===k?null:k);render();}
 function setGrp(g){filter.grp=filter.grp===g?null:g;render();}
 function setQ(v){filter.q=v;render();setTimeout(function(){var el=document.querySelector('.search');if(el&&el.focus){el.focus();var n=el.value.length;if(el.setSelectionRange)try{el.setSelectionRange(n,n);}catch(e){}}},0);}
@@ -583,7 +643,7 @@ function compareView(){const a=P[cmpA],b=P[cmpB];if(!a||!b)return '<div class="h
  return '<div class="selrow"><div class="field"><label>Person A</label><select class="big" onchange="cmpA=+this.value;render()">'+opts(cmpA)+'</select></div><div class="field"><label>Person B</label><select class="big" onchange="cmpB=+this.value;render()">'+opts(cmpB)+'</select></div></div>'
  +(cmpA===cmpB?'<div class="hint">Pick two different people.</div>':'<div class="cmp">'+[[a,ta],[b,tb]].map(function(x){var p=x[0],tp=x[1];return '<div class="col"><h3>'+p.n+'</h3>'+(tp?'<div class="kt">'+tp.head+'.</div>':'')
   +'<div class="row"><span class="k">LivStyle</span><span class="val">'+(p.lp||"—")+' / '+(p.lu||"—")+'</span></div>'
-  +'<div class="row"><span class="k">16 Types</span><span class="val">'+(p.t?p.t+(p.id16?"-"+p.id16:""):"—")+'</span></div>'
+  +'<div class="row"><span class="k">16 Types</span><span class="val">'+(p.t?p.t+(p.id16?"-"+p.id16.charAt(0):""):"—")+'</span></div>'
   +'<div class="row"><span class="k">Wk. Genius</span><span class="val">'+(p.wg.length?p.wg.join(" · "):"—")+'</span></div>'
   +'<div class="row"><span class="k">Strengths</span><span class="val">'+(p.cs.length?p.cs.join(", "):"—")+'</span></div>'
   +'<div class="row"><span class="k">Sp. Gifts</span><span class="val">'+(p.sg.length?p.sg.join(", "):"—")+'</span></div></div>';}).join('')+'</div>'+cmpSynth(a,b));}
@@ -1037,6 +1097,7 @@ async function saveProfile(){
     "SG 1":ED.sg[0]||"","SG 2":ED.sg[1]||"","SG 3":ED.sg[2]||"",
     "SG Test":ED.sgt||"",
     "Key Thread":ED.kt||"",
+    "Development Focus":ED.df||"","Development Plan":ED.dp||"","Growth Notes":ED.gn||"",
     "Leadership Set":!!ED.lead
   };
   if(ED.email!==undefined)fields["Email"]=ED.email||"";
@@ -1079,7 +1140,7 @@ function manageView(){
      +'<div class="synth">'
      +'<div class="sec" style="--accent:var(--ink)"><h4><span class="dot"></span>Person</h4>'
        +'<label class="fl">Full name</label><input class="fi" value="'+(ED.n||'').replace(/"/g,'&quot;')+'" oninput="edSet(\'n\',this.value)">'
-       +sel('Division','dv',uniq(p=>p.dv),ED.dv)+sel('Country','co',uniq(p=>p.co),ED.co)
+       +sel('Division','dv',["International Resources","National Ministries","President's Division"],ED.dv)+sel('Country','co',uniq(p=>p.co),ED.co)
        +sel('Status','st',["Active","Inactive"],ED.st)
        +'<label class="fl" style="margin-top:12px"><input type="checkbox" '+(ED.lead?'checked':'')+' onchange="edSet(\'lead\',this.checked)"> In the leadership set (the 45)</label>'
      +'</div>'
@@ -1089,7 +1150,7 @@ function manageView(){
      +'</div>'
      +'<div class="sec" style="--accent:var(--p16)"><h4><span class="dot"></span>16 Personalities</h4>'
        +sel('Type','t',T16_ALL,ED.t)
-       +sel('Identity','id16',["A","T"],ED.id16)
+       +sel('Identity','id16',["Assertive","Turbulent"],ED.id16)
      +'</div>'
      +'<div class="sec" style="--accent:var(--wg)"><h4><span class="dot"></span>Working Genius</h4>'
        +'<label class="fl">Geniuses — energise them (pick 2)</label><div class="bar" style="margin:0 0 10px">'+chips(WGorder,'wg',2)+'</div>'
@@ -1106,6 +1167,15 @@ function manageView(){
        +'<label class="fl">The thread — write it as: evidence. Thread: the essence.</label>'
        +'<textarea class="fi" rows="5" oninput="edSet(\'kt\',this.value)" placeholder="Wonder + Tenacity bracket a mind that gathers everything… Thread: curiosity carried all the way to a finished, teachable answer.">'+(ED.kt||'')+'</textarea>'
        +'<p style="font-size:12px;color:var(--soft);margin-top:8px">Leave the thread blank if you\u2019re not sure. An empty thread is better than a guessed one.</p>'
+     +'</div>'
+     +'<div class="sec" style="--accent:var(--sg)"><h4><span class="dot"></span>Development plan</h4>'
+       +'<label class="fl">Focus (one line — the E-team summary headline)</label>'
+       +'<input class="fi" value="'+(ED.df||'').replace(/"/g,'&quot;')+'" oninput="edSet(\'df\',this.value)" placeholder="e.g. Growing from strong individual contributor into a team leader">'
+       +'<label class="fl">The plan — growth areas, goals, next steps</label>'
+       +'<textarea class="fi" rows="4" oninput="edSet(\'dp\',this.value)" placeholder="What they\u2019re working on and why. The growth edges on their profile are a good starting point.">'+(ED.dp||'')+'</textarea>'
+       +'<label class="fl">Growth so far — progress, wins, what\u2019s changed</label>'
+       +'<textarea class="fi" rows="4" oninput="edSet(\'gn\',this.value)" placeholder="How they\u2019ve grown since the plan was set.">'+(ED.gn||'')+'</textarea>'
+       +'<p style="font-size:12px;color:var(--soft);margin-top:8px">Saving stamps today\u2019s date, so the E-team can see how current the plan is.'+(ED.pu?' Last updated '+fmtDate(ED.pu)+'.':'')+'</p>'
      +'</div>'
      +'</div></div></div>'
      +'<div style="display:flex;gap:10px;align-items:center;margin-top:6px">'
@@ -1285,6 +1355,47 @@ function teamHTML(){
   +'</div><p class="disclaim">Built from partial, self-reported assessments. This is a planning aid for composing and running a team \u2014 a set of questions to take into the room, not a scorecard on the people in it.</p></div>';
 }
 
+// Growth edges the ASSESSMENTS suggest — watch-fors/blind-spots reframed as development.
+// A starting point for a plan, clearly labelled as data-suggested, never the plan itself.
+function growthEdges(p){
+ const grp=T16grp(p.t), pts=[];
+ if(hi(p,"Avoiding")) pts.push({text:"Surfacing hard things directly instead of letting them sit — conflict-avoidance reads high.",from:[LENS.LIV]});
+ if(grp==="NT") pts.push({text:"Attending to warmth and the human read, not only the logic.",from:[LENS.P16]});
+ if(grp==="NF"||hi(p,"Heart")) pts.push({text:"Holding a hard line when it matters, even at the cost of harmony.",from:[grp==="NF"?LENS.P16:LENS.LIV]});
+ if(p.t&&["ESTJ","ENTJ","ESTP","ENTP"].includes(p.t)) pts.push({text:"Making space for slower processors before landing a decision.",from:[LENS.P16]});
+ if(p.lp&&p.lu&&p.lp!==p.lu) pts.push({text:"Staying grounded under load, so the crisis-them and the calm-them are closer ("+p.lp+"→"+p.lu+").",from:[LENS.LIV]});
+ if(lo(p,"Orderly")) pts.push({text:"Building enough scaffolding to finish — or pairing with a finisher — rather than leaving work at 80%.",from:[LENS.LIV]});
+ if(p.wgf&&p.wgf.length) pts.push({text:"These drain them ("+p.wgf.join(", ")+") — grow at doing them in small doses, or design the role to delegate them.",from:[LENS.WG]});
+ const used=(p.tr&&Object.keys(p.tr).length?1:0)+(p.t?1:0)+((p.wgf&&p.wgf.length)?1:0);
+ return {points:pts.slice(0,4), used:Math.min(used,3), total:3};
+}
+
+function fmtDate(s){ if(!s)return ""; var d=new Date(s); if(isNaN(d))return s; return d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}); }
+function monthsSince(s){ if(!s)return null; var d=new Date(s); if(isNaN(d))return null; return (Date.now()-d.getTime())/(1000*60*60*24*30); }
+
+// The E-team summary of a person's development plan + the assessment-suggested edges.
+function devPlanSection(p,rp){
+ const has=p.df||p.dp||p.gn;
+ const age=monthsSince(p.pu);
+ const stale = age!==null && age>6;
+ let head='<div class="dp"><div class="dphead"><span class="dplbl">Development plan</span>'
+   +(p.pu?'<span class="dpstamp'+(stale?' stale':'')+'">updated '+fmtDate(p.pu)+(stale?' · may be stale':'')+'</span>':(has?'':'<span class="dpstamp">not started</span>'))
+   +'</div>';
+ if(has){
+   head+=(p.df?'<div class="dpfocus">'+p.df+'</div>':'')
+     +'<div class="dpgrid">'
+     +(p.dp?'<div class="dpcol"><span class="dpk">The plan</span><p>'+p.dp.replace(/\n/g,"<br>")+'</p></div>':'')
+     +(p.gn?'<div class="dpcol"><span class="dpk">Growth so far</span><p>'+p.gn.replace(/\n/g,"<br>")+'</p></div>':'')
+     +'</div>';
+ } else {
+   head+='<p class="dpempty">No plan written yet. The assessments below suggest where growth conversations could start — a coach or leader turns that into the actual plan under <b>Development</b>.</p>';
+ }
+ // engine-suggested growth edges, always shown
+ head+='<div class="dpedges">'+readBlock("Growth edges the assessments suggest", growthEdges(p))
+   +'<p class="readnote">These are reframed from this person’s own watch-fors — a prompt for the conversation, not a verdict or the plan.</p></div>';
+ return head+'</div>';
+}
+
 function openPerson(i){cur=i;page="person";render();window.scrollTo(0,0);}
 function openTeam(){page="team";render();window.scrollTo(0,0);}
 function personHTML(i){const p=P[i],rp=readProfile(p),dom=domainsOf(p.cs),tp=threadParts(p.kt);
@@ -1293,6 +1404,7 @@ function personHTML(i){const p=P[i],rp=readProfile(p),dom=domainsOf(p.cs),tp=thr
  return '<div class="detail"><button class="back" onclick="backToList()">\u2190 Back</button>'
   +'<div class="dhead"><h2>'+p.n+'</h2><div class="grp">'+p.g+(p.st==='Inactive'?' \u00b7 inactive':'')+'</div></div>'
   +hero
+  +devPlanSection(p,rp)
   +'<div class="cols"><div>'
 
   +'<div class="synth thpanel" style="margin-top:0;border-top:none;padding-top:0">'
@@ -1305,17 +1417,222 @@ function personHTML(i){const p=P[i],rp=readProfile(p),dom=domainsOf(p.cs),tp=thr
   +'</div><div>'
   +'<div class="frameworks">'
   +'<div class="fw" style="--accent:var(--liv)"><div class="t">LivStyle</div><div class="v">'+(p.lp||"—")+'<small>Under pressure: '+(p.lu||"—")+'</small></div></div>'
-  +'<div class="fw" style="--accent:var(--p16)"><div class="t">16 Personalities</div><div class="v">'+(p.t?p.t+(p.id16?"-"+p.id16:""):"—")+'</div></div>'
+  +'<div class="fw" style="--accent:var(--p16)"><div class="t">16 Personalities</div><div class="v">'+(p.t?p.t+(p.id16?"-"+p.id16.charAt(0):""):"—")+'</div></div>'
   +'<div class="fw" style="--accent:var(--wg)"><div class="t">Working Genius</div><div class="v">'+(p.wg.length?p.wg.join(" · "):'<small>Not on file yet</small>')+'</div></div>'
   +'<div class="fw" style="--accent:var(--sg)"><div class="t">Spiritual Gifts</div><div class="v">'+(p.sg.length?p.sg.join(" · "):'<small>Not on file yet</small>')+'</div></div>'
   +'<div class="fw full" style="--accent:var(--cs)"><div class="t">CliftonStrengths — top 5</div><div class="v">'+(p.cs.length?p.cs.map((c,i)=>(i+1)+". "+c).join("&nbsp;&nbsp; "):'<small>Not on file yet</small>')+(dom.length?'<small>Leans: '+dom.map(d=>d[0]).join(", ")+'</small>':'')+'</div></div>'
   +'</div><p class="disclaim">The Key Thread and reads below are a synthesis across self-reported assessments — a conversation-starter held up against the actual person, not a verdict.</p></div>';
 }
+
+/* ================= DEVELOPMENT TRACKING (Executive only) =================
+   A tracked set of people, each rated on a fixed backbone of 14 dimensions.
+   Every save appends a dated, authored snapshot (never overwrites), so the
+   dashboard can show movement over time. Plan text is human-authored; the
+   assessments only SUGGEST what to watch. Most sensitive data in the app. */
+
+const BACKBONE=[
+ {group:"Character", accent:"var(--wg)", dims:[
+   {k:"integrity",label:"Integrity",hi:"words and life line up; trustworthy under pressure"},
+   {k:"humility",label:"Humility",hi:"teachable; shares credit; owns mistakes"},
+   {k:"emo",label:"Emotional health",hi:"self-aware, regulated, not driven by wounds"},
+   {k:"resilience",label:"Resilience",hi:"recovers from setbacks; sustainable pace"}]},
+ {group:"Calling & convictions", accent:"var(--liv)", dims:[
+   {k:"calling",label:"Clarity of calling",hi:"knows what they\u2019re for and why"},
+   {k:"ownership",label:"Ownership & drive",hi:"takes initiative; doesn\u2019t wait to be told"},
+   {k:"kingdom",label:"Kingdom-mindedness",hi:"builds the mission, not their own name"}]},
+ {group:"Relational & leadership", accent:"var(--p16)", dims:[
+   {k:"leads",label:"Leads others",hi:"sets a direction others follow"},
+   {k:"develops",label:"Develops others",hi:"grows the people around them"},
+   {k:"conflict",label:"Handles conflict",hi:"surfaces and resolves; neither avoids nor steamrolls"},
+   {k:"trust",label:"Team trust",hi:"trusted by peers; builds safety"}]},
+ {group:"Skill & execution", accent:"var(--cs)", dims:[
+   {k:"competence",label:"Role competence",hi:"skilled at the actual job"},
+   {k:"followthrough",label:"Follow-through",hi:"closes the loop; things get done"},
+   {k:"judgment",label:"Judgment",hi:"makes wise calls with incomplete information"}]}
+];
+const BB_DIMS=[]; BACKBONE.forEach(g=>g.dims.forEach(d=>BB_DIMS.push(d.k)));
+const BB_LABEL={}; BACKBONE.forEach(g=>g.dims.forEach(d=>BB_LABEL[d.k]=d.label));
+
+// --- tracking helpers ---
+// red -> amber -> green across the 1-10 scale, so a low score reads as a warm colour
+function scaleColor(v){
+  v=Math.max(1,Math.min(10,+v||1));
+  const stops=[[1,192,69,58],[5.5,201,138,43],[10,74,138,74]]; // [pos, r,g,b]
+  let a=stops[0],b=stops[stops.length-1];
+  for(let i=0;i<stops.length-1;i++){ if(v>=stops[i][0]&&v<=stops[i+1][0]){ a=stops[i]; b=stops[i+1]; break; } }
+  const t=(v-a[0])/((b[0]-a[0])||1);
+  const mix=(i)=>Math.round(a[i]+(b[i]-a[i])*t);
+  return 'rgb('+mix(1)+','+mix(2)+','+mix(3)+')';
+}
+function trkOf(p){ return (p&&p.trk&&typeof p.trk==='object')?p.trk:null; }
+function isTracked(p){ const t=trkOf(p); return !!(t&&t.tracked); }
+function latestReading(t){ return (t&&t.history&&t.history.length)?t.history[t.history.length-1]:null; }
+function prevReading(t){ return (t&&t.history&&t.history.length>1)?t.history[t.history.length-2]:null; }
+function grpAvg(vals,g){ if(!vals)return null; const xs=g.dims.map(d=>vals[d.k]).filter(v=>typeof v==='number'); return xs.length?xs.reduce((a,b)=>a+b,0)/xs.length:null; }
+function overallAvg(vals){ if(!vals)return null; const xs=BB_DIMS.map(k=>vals[k]).filter(v=>typeof v==='number'); return xs.length?xs.reduce((a,b)=>a+b,0)/xs.length:null; }
+function daysSince(d){ if(!d)return null; const t=new Date(d); if(isNaN(t))return null; return (Date.now()-t.getTime())/(1000*60*60*24); }
+function arrow(now,then){ if(now==null||then==null)return '<span class="arw flat">\u2192</span>'; const d=now-then; if(Math.abs(d)<0.25)return '<span class="arw flat">\u2192</span>'; return d>0?'<span class="arw up">\u2191'+d.toFixed(1)+'</span>':'<span class="arw dn">\u2193'+Math.abs(d).toFixed(1)+'</span>'; }
+function fmtD(s){ if(!s)return ""; var d=new Date(s); if(isNaN(d))return s; return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}); }
+
+// tiny inline sparkline of a group's average over the readings
+function sparkline(hist,g){
+  const pts=hist.map(h=>grpAvg(h.v,g)).filter(v=>v!=null);
+  if(pts.length<2)return '<span style="font-size:11px;color:#9aa6a2">one reading</span>';
+  const w=64,h=18,min=0,max=10;
+  const xs=pts.map((v,i)=>[ (i/(pts.length-1))*w, h-((v-min)/(max-min))*h ]);
+  const d=xs.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><path d="'+d+'" fill="none" stroke="'+g.accent+'" stroke-width="1.5"/></svg>';
+}
+
+// which backbone dimensions the ASSESSMENTS suggest watching (suggestion only)
+function trackSuggest(p){
+  const grp=T16grp(p.t), out=[];
+  const add=(dim,why,from)=>out.push({dim,why,from});
+  if(hi(p,"Avoiding")) add("conflict","conflict-avoidance reads high \u2014 may let hard things sit",LENS.LIV);
+  if(grp==="NT"||lo(p,"Heart")) add("emo","logic-first; warmth and the human read may need attention",grp==="NT"?LENS.P16:LENS.LIV);
+  if(p.lp&&p.lu&&p.lp!==p.lu) add("resilience","shifts under pressure ("+p.lp+"\u2192"+p.lu+") \u2014 watch how they hold up under load",LENS.LIV);
+  if(p.t&&["ESTJ","ENTJ","ESTP","ENTP"].includes(p.t)) add("develops","fast, decisive \u2014 growing others may need deliberate slowing down",LENS.P16);
+  if(p.wgf&&p.wgf.length) add("competence","drained by "+p.wgf.join(", ")+" \u2014 watch role fit and sustainability",LENS.WG);
+  if(grp==="NF"||dom0(p)==="Relationship Building") add("conflict","prizes harmony \u2014 may soften hard truths",grp==="NF"?LENS.P16:LENS.CS);
+  return out.slice(0,5);
+}
+function dom0(p){ const d=domainsOf(p.cs); return d.length?d[0][0]:""; }
+
+// --- state ---
+let TKcur=null;            // index into P of the person being viewed, or null = dashboard
+let TKslid={}, TKtarg={}, TKnote="", TKplan="", TKfocus="", TKgrowth="", TKwhat="", TKdev="", TKstatus="", TKshowTargets=false;
+
+function trackReset(p){
+  const t=trkOf(p)||{}; const lr=latestReading(t);
+  TKslid={}; TKtarg={};
+  BB_DIMS.forEach(k=>{ TKslid[k]=(lr&&typeof lr.v[k]==='number')?lr.v[k]:5; TKtarg[k]=(t.targets&&typeof t.targets[k]==='number')?t.targets[k]:8; });
+  TKnote=""; TKplan=p.dp||""; TKfocus=p.df||""; TKgrowth=p.gn||""; TKwhat=t.whatHelps||""; TKdev=t.developer||""; TKstatus=""; TKshowTargets=false;
+}
+function openTrack(i){ TKcur=i; trackReset(P[i]); page="track"; render(); window.scrollTo(0,0); }
+function trackHome(){ TKcur=null; render(); window.scrollTo(0,0); }
+function tkSet(k,v){ TKslid[k]=+v; render(); }
+function tkTarg(k,v){ TKtarg[k]=+v; render(); }
+function tkField(f,v){ if(f==='note')TKnote=v; else if(f==='plan')TKplan=v; else if(f==='focus')TKfocus=v; else if(f==='growth')TKgrowth=v; else if(f==='what')TKwhat=v; else if(f==='dev')TKdev=v; }
+function tkToggleTargets(){ TKshowTargets=!TKshowTargets; render(); }
+
+async function tkSave(startTracking){
+  const p=P[TKcur]; TKstatus='Saving\u2026'; render();
+  const t=trkOf(p)||{history:[]};
+  t.tracked=true; t.developer=TKdev; t.whatHelps=TKwhat; t.targets=Object.assign({},TKtarg);
+  if(!Array.isArray(t.history))t.history=[];
+  // append a new dated reading (author stamped server-side)
+  t.history.push({ d:new Date().toISOString().slice(0,10), by:"", v:Object.assign({},TKslid), note:TKnote, _new:true });
+  try{
+    const res=await fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({login:CRED.l,password:CRED.p,recordId:p.id,trk:t,plan:TKplan,focus:TKfocus,growth:TKgrowth})});
+    const dd=await res.json();
+    if(!res.ok)throw new Error((dd.error||'Save failed')+(dd.detail?' \u2014 '+String(dd.detail).slice(0,160):''));
+    const fresh=await load(CRED.l,CRED.p); P=fresh.people; ROLES=fresh.roles||[];
+    TKstatus='<span style="color:#2f7a4d">Saved '+(dd.date?fmtD(dd.date):'')+' by '+(dd.by||'you')+'.</span>';
+    render();
+  }catch(e){ TKstatus='<span style="color:#b4453a">'+e.message+'</span>'; render(); }
+}
+
+function startTracking(i){ // begin tracking a roster person
+  const p=P[i]; if(!p.trk)p.trk={tracked:true,history:[]}; else p.trk.tracked=true;
+  openTrack(i);
+}
+
+// ---------- DASHBOARD ----------
+function trackView(){
+  if(!CAP.exec) return '<div class="hint">Development tracking is for the Executive Team.</div>';
+  if(TKcur!=null) return trackDetail(P[TKcur]);
+  const tracked=P.map((p,i)=>({p,i})).filter(o=>isTracked(o.p));
+  // sort: stale / never-reviewed first, then biggest gap
+  tracked.forEach(o=>{ const t=trkOf(o.p),lr=latestReading(t); o.days=lr?daysSince(lr.d):9999; o.gap=(()=>{const cur=lr?overallAvg(lr.v):null,tg=overallAvg(t.targets); return (cur!=null&&tg!=null)?(tg-cur):0;})(); });
+  tracked.sort((a,b)=> (b.days>60?1:0)-(a.days>60?1:0) || b.gap-a.gap);
+
+  const notTracked=P.filter(p=>!isTracked(p)).sort((a,b)=>a.n.localeCompare(b.n));
+  const addOpts='<option value="">\u2014 add someone to track \u2014</option>'+notTracked.map(p=>'<option value="'+P.indexOf(p)+'">'+p.n+'</option>').join('');
+
+  const cards=tracked.map(function(o){
+    const p=o.p,t=trkOf(p),lr=latestReading(t),pr=prevReading(t);
+    const stale=o.days>60;
+    const groups=BACKBONE.map(function(g){
+      const now=lr?grpAvg(lr.v,g):null, then=pr?grpAvg(pr.v,g):null;
+      return '<div class="tgrp"><div class="tgn">'+g.group.split(' ')[0]+'</div><div class="tgv" style="color:'+(now!=null?scaleColor(now):g.accent)+'">'+(now!=null?now.toFixed(1):'\u2014')+arrow(now,then)+'</div>'+sparkline((t.history||[]),g)+'</div>';
+    }).join('');
+    return '<button class="tcardx'+(stale?' stale':'')+'" onclick="openTrack('+o.i+')">'
+      +'<div class="tcx-head"><div><div class="tcx-name">'+p.n+'</div><div class="tcx-dev">'+(t.developer?'developed by '+t.developer:'no developer set')+'</div></div>'
+      +'<div class="tcx-when'+(stale?' stale':'')+'">'+(lr?(stale?'\u26a0 ':'')+'reviewed '+fmtD(lr.d):'never reviewed')+'</div></div>'
+      +(t.whatHelps?'<div class="tcx-help">\u201c'+t.whatHelps+'\u201d</div>':'')
+      +'<div class="tgrps">'+groups+'</div></button>';
+  }).join('');
+
+  return '<div class="detail">'
+    +'<div class="tkhero"><div><h2 style="font-family:Newsreader,serif;font-size:26px;font-weight:500">Development tracking</h2>'
+    +'<p style="font-size:13px;color:var(--soft);margin-top:4px;max-width:640px">The people you\u2019re each developing, and where they\u2019re at. Every reading is dated and signed, so you can see movement between times you meet. A care tool held between you \u2014 not a scorecard, not a ranking.</p></div>'
+    +'<select class="fi" style="max-width:230px" onchange="if(this.value)startTracking(+this.value)">'+addOpts+'</select></div>'
+    +(tracked.length?'<div class="tcards">'+cards+'</div>':'<div class="hint">No one is being tracked yet. Add someone above to begin.</div>')
+    +'</div>';
+}
+
+// ---------- DETAIL (sliders + plan + suggestions + history) ----------
+function trackDetail(p){
+  const t=trkOf(p)||{history:[]}, lr=latestReading(t), tp=threadParts(p.kt);
+  const sug=trackSuggest(p);
+  const sugHTML=sug.length
+    ? '<div class="tksug"><span class="thk">The assessments suggest watching</span><ul>'
+      +sug.map(s=>'<li><b>'+BB_LABEL[s.dim]+'</b> \u2014 '+s.why+' <span class="src">'+s.from+'</span></li>').join('')
+      +'</ul><p class="readnote">Suggestions from '+p.n+'\u2019s own assessments \u2014 a prompt for what to pay attention to. You set the sliders and write the plan.</p></div>'
+    : '';
+
+  const groups=BACKBONE.map(function(g){
+    const rows=g.dims.map(function(d){
+      const v=TKslid[d.k], tv=TKtarg[d.k], gap=tv-v;
+      const c=scaleColor(v);
+      return '<div class="slrow"><div class="sllab"><span class="slname">'+d.label+'</span><span class="slhi">'+d.hi+'</span></div>'
+        +'<div class="slctl"><input type="range" class="scale" min="1" max="10" step="1" value="'+v+'" style="--c:'+c+';--fill:'+Math.round((v-1)/9*100)+'%" oninput="tkSet(\''+d.k+'\',this.value)">'
+        +'<span class="slval" style="color:'+c+'">'+v+'</span>'
+        +(TKshowTargets?'<span class="sltarg">target '+tv+'</span>':(gap>=2?'<span class="slgap">\u2191'+gap+' to target</span>':''))+'</div>'
+        +(TKshowTargets?'<div class="slctl targ"><input type="range" min="1" max="10" step="1" value="'+tv+'" oninput="tkTarg(\''+d.k+'\',this.value)"><span class="slval" style="opacity:.6">'+tv+'</span></div>':'')
+        +'</div>';
+    }).join('');
+    return '<div class="slgroup"><h4 style="--accent:'+g.accent+'"><span class="dot"></span>'+g.group+'</h4>'+rows+'</div>';
+  }).join('');
+
+  // history list
+  const hist=(t.history||[]).slice().reverse().map(function(h){
+    return '<div class="hrow"><div class="hd">'+fmtD(h.d)+(h.by?' \u00b7 '+h.by:'')+'</div>'
+      +'<div class="hv">'+BACKBONE.map(g=>{const a=grpAvg(h.v,g);return '<span style="color:'+g.accent+'">'+(a!=null?a.toFixed(1):'\u2014')+'</span>';}).join(' / ')+'</div>'
+      +(h.note?'<div class="hn">'+h.note+'</div>':'')+'</div>';
+  }).join('');
+
+  return '<div class="detail"><button class="back" onclick="trackHome()">\u2190 All tracked people</button>'
+    +'<div class="dhead"><h2>'+p.n+'</h2><div class="grp">'+p.g+' \u00b7 development tracking</div></div>'
+    +(tp?'<div class="thread" style="margin-bottom:16px"><div class="lbl">Key Thread</div><p>'+tp.head+'.</p></div>':'')
+    +sugHTML
+    +'<div class="tkfields">'
+      +'<label class="fl">Who\u2019s developing them</label><input class="fi" value="'+(TKdev||'').replace(/"/g,'&quot;')+'" placeholder="e.g. Mel" oninput="tkField(\'dev\',this.value)">'
+      +'<label class="fl">What would help them most right now</label><input class="fi" value="'+(TKwhat||'').replace(/"/g,'&quot;')+'" placeholder="e.g. ready for more scope \u00b7 protect his margin \u00b7 needs a bigger challenge" oninput="tkField(\'what\',this.value)">'
+    +'</div>'
+    +'<div class="slbar"><span class="thk" style="margin:0">Where they\u2019re at \u2014 drag each slider (1\u201310)</span>'
+      +'<button class="chip" onclick="tkToggleTargets()">'+(TKshowTargets?'Hide targets':'Set targets (need-to-be)')+'</button></div>'
+    +'<div class="sliders">'+groups+'</div>'
+    +'<div class="tkfields">'
+      +'<label class="fl">Reading note (optional \u2014 what prompted these, what you saw)</label><textarea class="fi" rows="2" oninput="tkField(\'note\',this.value)" placeholder="Context for this reading.">'+(TKnote||'')+'</textarea>'
+      +'<label class="fl" style="margin-top:14px">Development plan \u2014 focus</label><input class="fi" value="'+(TKfocus||'').replace(/"/g,'&quot;')+'" placeholder="The one-line focus" oninput="tkField(\'focus\',this.value)">'
+      +'<label class="fl">The plan \u2014 what you\u2019re working on with them</label><textarea class="fi" rows="4" oninput="tkField(\'plan\',this.value)">'+(TKplan||'')+'</textarea>'
+      +'<label class="fl">Growth so far</label><textarea class="fi" rows="3" oninput="tkField(\'growth\',this.value)">'+(TKgrowth||'')+'</textarea>'
+    +'</div>'
+    +'<div class="slbar" style="border:none;margin-top:6px"><button class="go" onclick="tkSave()">Save review</button>'
+      +'<span style="font-size:12.5px;color:var(--soft)">Saves a dated, signed snapshot \u2014 the previous readings are kept, not overwritten.</span>'
+      +'<span style="font-size:13px">'+TKstatus+'</span></div>'
+    +(hist?'<div class="histbox"><span class="thk">Review history \u00b7 group averages (Char / Calling / Relational / Skill)</span>'+hist+'</div>':'')
+    +'</div>';
+}
+
 function render(){
  chrome(page==='list');
  if(page==='person'){V().innerHTML=personHTML(cur);return;}
  if(page==='team'){V().innerHTML=teamHTML();return;}
- V().innerHTML=mode==='people'?peopleView():mode==='compare'?compareView():mode==='threads'?threadsView():mode==='role'?roleView():mode==='manage'?manageView():teamView();
+ if(page==='track'){V().innerHTML=trackView();return;}
+ V().innerHTML=mode==='people'?peopleView():mode==='compare'?compareView():mode==='threads'?threadsView():mode==='role'?roleView():mode==='manage'?manageView():mode==='track'?trackView():teamView();
 }
 </script>
 </body>

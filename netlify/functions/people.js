@@ -19,6 +19,8 @@ const FIELDS = [
   "SG 1", "SG 2", "SG 3",
   "Key Thread",
   "Leadership Set",
+  "Development Focus", "Development Plan", "Growth Notes", "Plan Updated",
+  "Dev Tracking",
   // LivStyle traits — used by Role Fit scoring
   "Processing Blueprint: Intuitive", "Processing Blueprint: Concrete",
   "Processing Blueprint: Heart", "Processing Blueprint: Orderly",
@@ -164,6 +166,11 @@ exports.handler = async (event) => {
           cs: ["CS 1", "CS 2", "CS 3", "CS 4", "CS 5"].map((k) => x[k]).filter(Boolean),
           sg: ["SG 1", "SG 2", "SG 3"].map((k) => x[k]).filter(Boolean),
           kt: x["Key Thread"] || "",
+          df: x["Development Focus"] || "",
+          dp: x["Development Plan"] || "",
+          gn: x["Growth Notes"] || "",
+          pu: x["Plan Updated"] || "",
+          trk: (function(){ try{ return x["Dev Tracking"] ? JSON.parse(x["Dev Tracking"]) : null; }catch(e){ return null; } })(),
           tr: Object.fromEntries(Object.entries(TRAITS).map(([k, f]) => [k, pct(x[f])]).filter(e => e[1] !== null)),
         });
       });
